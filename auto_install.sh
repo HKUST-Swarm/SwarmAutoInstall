@@ -1,34 +1,18 @@
 #Mocka Depenlibgsl-dev 
+sudo apt-get update
 sudo apt-get install libarmadillo-dev libusb-dev libspnav-dev libgsl-dev -y
 
-
+mkdir -p ~/source
 #Install ros
 #Installing ros
-cd ~
+cd ~/source
 git clone -b 3.6 https://github.com/dji-sdk/Onboard-SDK.git
-cd Onboard-SDK
-mkdir build
-cd build
+mkdir -p Onboard-SDK/build
+cd Onboard-SDK/build
 cmake ..
 make djiosdk-core
 sudo make install djiosdk-core
 
-#Create workspace
-mkdir -p ~/swarm_ws/src
-cd ~/swarm_ws/src
-#git clone git@github.com:HKUST-Aerial-Robotics/infinity_uwb_ros.git
-git clone https://github.com/gaowenliang/ptgrey_reader
-cd ptgrey_reader
-sh autoinstall_tx2.sh
-
-cd ~/swarm_ws
-catkin_make
-echo "source /home/dji/swarm_ws/devel/setup.bash"  >> ~/.bashrc
-sudo cp  ~/SwarmAutoInstall/rc.local /etc/
-sudo chown root /etc/rc.local
-sudo chmod a+x /etc/rc.local
-
-mkdir -p ~/source
 cd ~/source
 git clone https://github.com/mherb/kalman
 cd kalman
@@ -62,3 +46,20 @@ cd ~/source/ceres-solver/build
 cmake ..
 make -j4
 sudo make install
+
+
+#Create workspace
+mkdir -p ~/swarm_ws/src
+cd ~/swarm_ws/src
+#git clone git@github.com:HKUST-Aerial-Robotics/infinity_uwb_ros.git
+git clone https://github.com/gaowenliang/ptgrey_reader
+cd ptgrey_reader
+./autoinstall_tx2.sh
+
+cd ~/swarm_ws
+catkin_make
+
+echo "source /home/dji/swarm_ws/devel/setup.bash"  >> ~/.bashrc
+sudo cp  ~/SwarmAutoInstall/rc.local /etc/
+sudo chown root /etc/rc.local
+sudo chmod a+x /etc/rc.local
