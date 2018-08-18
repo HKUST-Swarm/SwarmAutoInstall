@@ -1,25 +1,30 @@
 #Mocka Depenlibgsl-dev 
 sudo apt-get update
-sudo apt-get install libarmadillo-dev libusb-dev libspnav-dev libgsl-dev -y
+sudo apt-get install libarmadillo-dev libusb-dev libspnav-dev libgsl-dev libgoogle-glog-dev  libatlas-base-dev libsuitesparse-dev -y
 
 mkdir -p ~/source
 cd ~/source
 #Seems need to Uninstall old eigen3 first 
+ping bitbucket.org -c 5
+
 sudo dpkg --remove --force-depends libeigen3-dev
 # Install eigen3.3.4
 wget http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2
 tar -xf 3.3.4.tar.bz2
 cd eigen-eigen-5a0156e40feb
 mkdir -p build
+cd build
 cmake ..
 make -j4
 sudo make install
 
 #And then, we need old eigen back
-sudo apt-get install libeigen3-dev
+sudo apt-get install libeigen3-dev -y
 
 #Install ros
 #Installing ros
+#Looks like it help dns
+ping github.com -c 5
 cd ~/source
 git clone -b 3.6 https://github.com/dji-sdk/Onboard-SDK.git
 mkdir -p Onboard-SDK/build
@@ -41,6 +46,7 @@ sudo make install
 #Install eigen
 
 #Install ceres server
+ping ceres-solver.googlesource.com -c 5
 cd ~/source
 git clone https://ceres-solver.googlesource.com/ceres-solver
 cd ~/source/ceres-solver
