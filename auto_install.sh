@@ -3,6 +3,21 @@ sudo apt-get update
 sudo apt-get install libarmadillo-dev libusb-dev libspnav-dev libgsl-dev -y
 
 mkdir -p ~/source
+cd ~/source
+#Seems need to Uninstall old eigen3 first 
+sudo dpkg --remove --force-depends libeigen3-dev
+# Install eigen3.3.4
+wget http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2
+tar -xf 3.3.4.tar.bz2
+cd eigen-eigen-5a0156e40feb
+mkdir -p build
+cmake ..
+make -j4
+sudo make install
+
+#And then, we need old eigen back
+sudo apt-get install libeigen3-dev
+
 #Install ros
 #Installing ros
 cd ~/source
@@ -24,18 +39,6 @@ make
 sudo make install
 
 #Install eigen
-
-cd ~/source
-#Uninstall old eigen3
-sudo dpkg --remove --force-depends libeigen3-dev
-# Install eigen3.3.4
-wget http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2
-tar -xf 3.3.4.tar.bz2
-cd eigen-eigen-5a0156e40feb
-mkdir -p build
-cmake ..
-make -j4
-sudo make install
 
 #Install ceres server
 cd ~/source
