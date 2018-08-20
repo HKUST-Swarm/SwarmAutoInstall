@@ -1,19 +1,18 @@
 #Mocka Depenlibgsl-dev 
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
 sudo apt-get update
-sudo apt-get install libarmadillo-dev libusb-dev libspnav-dev libgsl-dev libgoogle-glog-dev  libatlas-base-dev libsuitesparse-dev -y
+sudo apt-get install libarmadillo-dev libusb-dev libspnav-dev libgsl-dev libgoogle-glog-dev  libatlas-base-dev libsuitesparse-dev gcc-7 g++-7 -y
 
-mkdir -p ~/source
-cd ~/source
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 70 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+sudo update-alternatives --config gcc
+
+tar -xf SwarmDepends.tgz -C ~/
 #Seems need to Uninstall old eigen3 first 
-ping bitbucket.org -c 5
 
 sudo dpkg --remove --force-depends libeigen3-dev
 # Install eigen3.3.4
-wget http://bitbucket.org/eigen/eigen/get/3.3.4.tar.bz2
-tar -xf 3.3.4.tar.bz2
-cd eigen-eigen-5a0156e40feb
-mkdir -p build
-cd build
+cd ~/source/eigen-eigen-5a0156e40feb/build
 cmake ..
 make -j4
 sudo make install
@@ -24,21 +23,12 @@ sudo apt-get install libeigen3-dev -y
 #Install ros
 #Installing ros
 #Looks like it help dns
-ping github.com -c 5
-cd ~/source
-git clone -b 3.6 https://github.com/dji-sdk/Onboard-SDK.git
-mkdir -p Onboard-SDK/build
-cd Onboard-SDK/build
+cd ~/source/Onboard-SDK/build
 cmake ..
 make djiosdk-core
 sudo make install djiosdk-core
 
-cd ~/source
-git clone https://github.com/mherb/kalman
-cd kalman
-git submodule update --init
-mkdir build
-cd build
+cd ~/source/kalman/build
 cmake ..
 make
 sudo make install
@@ -46,14 +36,9 @@ sudo make install
 #Install eigen
 
 #Install ceres server
-ping ceres-solver.googlesource.com -c 5
-cd ~/source
-git clone https://ceres-solver.googlesource.com/ceres-solver
-cd ~/source/ceres-solver
-mkdir -p ~/source/ceres-solver/build
 cd ~/source/ceres-solver/build
 cmake ..
-make -j4
+#make -j4
 sudo make install
 
 
