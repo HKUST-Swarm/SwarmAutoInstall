@@ -8,7 +8,7 @@ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 70 --slave /u
 sudo update-alternatives --config gcc
 
 ping dl.dropboxusercontent.com -c 5
-wget https://dl.dropboxusercontent.com/s/hrq71iwxcuqzkja/SwarmDepends.tgz?dl=0
+wget https://dl.dropboxusercontent.com/s/hrq71iwxcuqzkja/SwarmDepends.tgz
 tar -xf SwarmDepends.tgz -C ~/
 #Seems need to Uninstall old eigen3 first 
 
