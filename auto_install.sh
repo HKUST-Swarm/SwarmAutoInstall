@@ -8,7 +8,7 @@ sudo apt-get install gcc-7 g++-7 libdw-dev -y
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 70 --slave /usr/bin/g++ g++ /usr/bin/g++-7
 sudo update-alternatives --config gcc
-
+sudo -H pip install pyquaternion
 ping dl.dropboxusercontent.com -c 5
 wget https://dl.dropboxusercontent.com/s/hrq71iwxcuqzkja/SwarmDepends.tgz
 tar -xf SwarmDepends.tgz -C ~/
