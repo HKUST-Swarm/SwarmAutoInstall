@@ -1,4 +1,10 @@
-#Mocka Depenlibgsl-dev 
+#Mocka Depenlibgsl-dev unt plz \n $
+github_user=xuhao1
+echo Github password plz\n $
+read github_pwd
+
+echo Will use $github_user and $github_pwd
+
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
 sudo apt-get update
 sudo apt-get install libarmadillo-dev libusb-dev libspnav-dev libgsl-dev libgoogle-glog-dev  -y
@@ -44,7 +50,7 @@ sudo make install
 
 #Install ceres server
 cd ~/source/ceres-solver/build
-cmake ..
+cmake ..    
 #make -j4
 sudo make install
 
@@ -53,13 +59,15 @@ sudo make install
 mkdir -p ~/swarm_ws/src
 cd ~/swarm_ws/src
 #git clone git@github.com:HKUST-Aerial-Robotics/infinity_uwb_ros.git
-git clone https://github.com/xuhao1/ptgrey_reader
+git clone https://github.com/xuhao1/ptgrey_reader.git
+git clone https://$github_user:$github_pwd@github.com/xuhao1/swarm_pkgs.git
+git clone https://github.com/groundmelon/camera_calibration_frontend.git
+git clone https://$github_user:$github_pwd@github.com/HKUST-Aerial-Robotics/VINS_Stereo.git
+git clone https://$github_user:$github_pwd@github.com/xuhao1/mocka.git
+
 cd ptgrey_reader
 sudo ./script/autoinstall_tx2.sh
 
-cd ~/swarm_ws/src
-git clone https://github.com/xuhao1/swarm_pkgs.git
-git clone https://github.com/HKUST-Aerial-Robotics/VINS_Stereo.git
 cd ~/swarm_ws
 catkin_make
 
