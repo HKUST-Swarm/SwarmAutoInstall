@@ -53,10 +53,13 @@ sudo make install
 mkdir -p ~/swarm_ws/src
 cd ~/swarm_ws/src
 #git clone git@github.com:HKUST-Aerial-Robotics/infinity_uwb_ros.git
-git clone https://github.com/gaowenliang/ptgrey_reader
+git clone https://github.com/xuhao1/ptgrey_reader
 cd ptgrey_reader
-./autoinstall_tx2.sh
+sudo ./script/autoinstall_tx2.sh
 
+cd ~/swarm_ws/src
+git clone https://github.com/xuhao1/swarm_pkgs.git
+git clone https://github.com/HKUST-Aerial-Robotics/VINS_Stereo.git
 cd ~/swarm_ws
 catkin_make
 
