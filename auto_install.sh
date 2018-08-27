@@ -1,6 +1,6 @@
 #Mocka Depenlibgsl-dev unt plz \n $
 github_user=xuhao1
-read -p "Enter your github passwd"\n github_pwd
+read -p "Enter your github passwd\n" github_pwd
 echo Will use $github_user and $github_pwd
 
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
