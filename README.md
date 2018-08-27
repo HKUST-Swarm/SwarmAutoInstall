@@ -4,7 +4,8 @@ This project is auto install swarm drone dependency
 
 Login to your TX2 with ssh and under home directory
 
->curl -sL https://raw.githubusercontent.com/xuhao1/SwarmAutoInstall/master/configure_tx2.sh | bash -
+>wget https://raw.githubusercontent.com/xuhao1/SwarmAutoInstall/master/configure_tx2.sh
+>bash configure_tx2.sh
 
 After code runned, plz restart. That is all fun!
 
