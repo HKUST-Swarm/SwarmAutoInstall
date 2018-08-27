@@ -1,7 +1,6 @@
 #Mocka Depenlibgsl-dev unt plz \n $
 github_user=xuhao1
-echo Github password plz\n $
-read github_pwd
+read -p "Enter your github passwd" github_pwd
 
 echo Will use $github_user and $github_pwd
 
