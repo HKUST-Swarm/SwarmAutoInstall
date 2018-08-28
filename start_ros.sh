@@ -8,4 +8,11 @@ export ROS_MASTER_URI=http://localhost:11311
 roscore > /home/dji/log_roscore.txt&
 sleep 5
 echo "Start uwb"
+roslaunch ptgrey_reader stereo-unsync.launch &
+PG_PID=$!
+
+sleep 10
+kill -9 $PG_PID
+
+roslaunch swarm_vo_fuse swarm_vo_fuse.launch > /home/dji/log_swarm.txt &
 #roslaunch infinity_uwb_ros uwb_node_manifold2.launch > /home/dji/log_uwb.txt & 
