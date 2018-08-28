@@ -60,7 +60,7 @@ cd ~/swarm_ws/src
 git clone https://github.com/xuhao1/ptgrey_reader.git
 git clone https://$github_user:$github_pwd@github.com/xuhao1/swarm_pkgs.git
 git clone https://github.com/groundmelon/camera_calibration_frontend.git
-git clone https://$github_user:$github_pwd@github.com/HKUST-Aerial-Robotics/VINS_Stereo.git
+git clone -b UltraFast https://$github_user:$github_pwd@github.com/HKUST-Aerial-Robotics/VINS_Stereo.git
 git clone https://$github_user:$github_pwd@github.com/xuhao1/mocka.git
 
 cd ptgrey_reader
