@@ -15,4 +15,7 @@ sleep 10
 kill -9 $PG_PID
 
 roslaunch swarm_vo_fuse swarm_vo_fuse.launch > /home/dji/log_swarm.txt &
+sleep 30
+roslaunch cascade_controller mf2_swarm.launch > /home/dji/log_swarm_controller &
+/bin/bash /home/dji/SwarmAutoInstall/start_controller.sh
 #roslaunch infinity_uwb_ros uwb_node_manifold2.launch > /home/dji/log_uwb.txt & 
