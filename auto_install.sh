@@ -1,5 +1,7 @@
 #Mocka Depenlibgsl-dev unt plz \n $
 #Let system can use ttyS0
+cp /home/dji/SwarmAutoInstall/autostart_config_template.sh  /home/dji/SwarmAutoInstall/autostart_config.sh
+chmod a+rw /home/dji/SwarmAutoInstall/autostart_config.sh
 sudo rm -f /etc/init/ttyS0.conf
 sudo cp ./extlinux.conf /boot/extlinux/extlinux.conf
 echo "Successful set ttyS0 can use"
