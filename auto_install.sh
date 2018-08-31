@@ -1,4 +1,8 @@
 #Mocka Depenlibgsl-dev unt plz \n $
+#Let system can use ttyS0
+sudo rm -f /etc/init/ttyS0.conf
+sudo cp ./extlinux.conf /boot/extlinux/extlinux.conf
+
 github_user=xuhao1
 read -p "Enter your github passwd $" github_pwd
 echo Will use $github_user and $github_pwd
