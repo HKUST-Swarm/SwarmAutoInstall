@@ -7,8 +7,10 @@ if __name__ == "__main__":
     template = Template(template_str)
 
     extrinsic_str = open("../output/extrinsic_parameter.csv").readlines()
-    extrinsic_str = extrinsic_str[2:-1]
+    extrinsic_str = extrinsic_str[2:]
     extrinsic_str = "".join(extrinsic_str)
+    
+    print(extrinsic_str)
     
     res = template.render(extrinsic_param=extrinsic_str)
     #print(res)    

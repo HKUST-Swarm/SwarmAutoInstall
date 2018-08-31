@@ -72,6 +72,7 @@ then
     roslaunch djisdkwrapper sdk.launch &> $LOG_PATH/log_sdk.txt &
     echo "sleep 10 for djisdk boot up"    
     sleep 10
+    rosrun swarm_vo_fuse swarm_tx2_helper.py
     roslaunch vins_estimator dji_stereo.launch config_path:=$CONFIG_PATH/dji_stereo/dji_stereo.yaml &> $LOG_PATH/log_vo.txt &
 fi
     
