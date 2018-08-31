@@ -2,6 +2,7 @@
 #Let system can use ttyS0
 sudo rm -f /etc/init/ttyS0.conf
 sudo cp ./extlinux.conf /boot/extlinux/extlinux.conf
+echo "Successful set ttyS0 can use"
 
 github_user=xuhao1
 read -p "Enter your github passwd $" github_pwd
@@ -19,7 +20,7 @@ sudo update-alternatives --config gcc
 
 sudo easy_install pip
 
-sudo -H pip install pyquaternion
+sudo -H pip install pyquaternion jinja2
 ping dl.dropboxusercontent.com -c 5
 wget https://dl.dropboxusercontent.com/s/hrq71iwxcuqzkja/SwarmDepends.tgz
 tar -xf SwarmDepends.tgz -C ~/
