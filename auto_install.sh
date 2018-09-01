@@ -60,14 +60,15 @@ if [ ! -d $DEP_PATH/ceres-solver ]; then
     make
     sudo make install
 
-    #Install eigen
-    ~/install_codes.sh
     #Install ceres server
     cd ~/source/ceres-solver/build
     cmake ..    
     #make -j4
     sudo make install
 fi
+
+#Install eigen
+$AutoInstallPath/install_codes.sh
 
 echo "source /home/dji/swarm_ws/devel/setup.bash"  >> ~/.bashrc
 sudo cp  $AutoInstallPath/rc.local /etc/
