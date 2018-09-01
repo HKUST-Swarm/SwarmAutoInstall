@@ -1,14 +1,14 @@
 #Mocka Depenlibgsl-dev unt plz \n $
 #Let system can use ttyS0
-cp /home/dji/SwarmAutoInstall/autostart_config_template.sh  /home/dji/SwarmAutoInstall/autostart_config.sh
-chmod a+rw /home/dji/SwarmAutoInstall/autostart_config.sh
+
+AutoInstallPath=/home/dji/SwarmAutoInstall
+
+cp $AutoInstallPath/autostart_config_template.sh  /home/dji/SwarmAutoInstall/autostart_config.sh
+chmod a+rw $AutoInstallPath/autostart_config.sh
 sudo rm -f /etc/init/ttyS0.conf
 sudo cp ./extlinux.conf /boot/extlinux/extlinux.conf
 echo "Successful set ttyS0 can use"
 
-github_user=xuhao1
-read -p "Enter your github passwd $" github_pwd
-echo Will use $github_user and $github_pwd
 
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
 sudo apt-get update
@@ -52,7 +52,7 @@ make
 sudo make install
 
 #Install eigen
-
+~/install_codes.sh
 #Install ceres server
 cd ~/source/ceres-solver/build
 cmake ..    
@@ -60,23 +60,7 @@ cmake ..
 sudo make install
 
 
-#Create workspace
-mkdir -p ~/swarm_ws/src
-cd ~/swarm_ws/src
-#git clone git@github.com:HKUST-Aerial-Robotics/infinity_uwb_ros.git
-git clone https://github.com/xuhao1/ptgrey_reader.git
-git clone https://$github_user:$github_pwd@github.com/xuhao1/swarm_pkgs.git
-git clone https://github.com/groundmelon/camera_calibration_frontend.git
-git clone -b UltraFast https://$github_user:$github_pwd@github.com/HKUST-Aerial-Robotics/VINS_Stereo.git
-git clone https://$github_user:$github_pwd@github.com/xuhao1/mocka.git
-
-cd ptgrey_reader
-sudo ./script/autoinstall_tx2.sh
-
-cd ~/swarm_ws
-catkin_make
-
 echo "source /home/dji/swarm_ws/devel/setup.bash"  >> ~/.bashrc
-sudo cp  ~/SwarmAutoInstall/rc.local /etc/
+sudo cp  $AutoInstallPath/rc.local /etc/
 sudo chown root /etc/rc.local
 sudo chmod a+x /etc/rc.local
