@@ -2,9 +2,17 @@
 #Let system can use ttyS0
 
 AutoInstallPath=/home/dji/SwarmAutoInstall
+CONFIG_PATH=/home/dji/SwarmConfig
+DEP_PATH=/home/dji/source
 
-cp $AutoInstallPath/autostart_config_template.sh  /home/dji/SwarmAutoInstall/autostart_config.sh
-chmod a+rw $AutoInstallPath/autostart_config.sh
+
+if [ ! -d $CONFIG_PATH ]; then
+    echo "There is no confied path, will create"
+    cp -r $AutoInstallPath/config $CONFIG_PATH
+    cp $AutoInstallPath/autostart_config_template.sh  $CONFIG_PATH/autostart_config.sh
+    chmod a+rw $CONFIG_PATH/autostart_config.sh
+fi
+
 sudo rm -f /etc/init/ttyS0.conf
 sudo cp ./extlinux.conf /boot/extlinux/extlinux.conf
 echo "Successful set ttyS0 can use"
@@ -23,42 +31,45 @@ sudo update-alternatives --config gcc
 sudo easy_install pip
 
 sudo -H pip install pyquaternion jinja2
-ping dl.dropboxusercontent.com -c 5
-wget https://dl.dropboxusercontent.com/s/hrq71iwxcuqzkja/SwarmDepends.tgz
-tar -xf SwarmDepends.tgz -C ~/
-#Seems need to Uninstall old eigen3 first 
 
-sudo dpkg --remove --force-depends libeigen3-dev
-# Install eigen3.3.4
-cd ~/source/eigen-eigen-5a0156e40feb/build
-cmake ..
-make -j4
-sudo make install
+if [ ! -d $DEP_PATH/ceres-solver ]; then
+    echo "Haven't install import Deps, will install now"
+    ping dl.dropboxusercontent.com -c 5
+    wget https://dl.dropboxusercontent.com/s/hrq71iwxcuqzkja/SwarmDepends.tgz
+    tar -xf SwarmDepends.tgz -C ~/
+    #Seems need to Uninstall old eigen3 first 
 
-#And then, we need old eigen back
-sudo apt-get install libeigen3-dev -y
+    sudo dpkg --remove --force-depends libeigen3-dev
+    # Install eigen3.3.4
+    cd ~/source/eigen-eigen-5a0156e40feb/build
+    cmake ..
+    make -j4
+    sudo make install
 
-#Install ros
-#Installing ros
-#Looks like it help dns
-cd ~/source/Onboard-SDK/build
-cmake ..
-make djiosdk-core
-sudo make install djiosdk-core
+    #And then, we need old eigen back
+    sudo apt-get install libeigen3-dev -y
 
-cd ~/source/kalman/build
-cmake ..
-make
-sudo make install
+    #Install ros
+    #Installing ros
+    #Looks like it help dns
+    cd ~/source/Onboard-SDK/build
+    cmake ..
+    make djiosdk-core
+    sudo make install djiosdk-core
 
-#Install eigen
-~/install_codes.sh
-#Install ceres server
-cd ~/source/ceres-solver/build
-cmake ..    
-#make -j4
-sudo make install
+    cd ~/source/kalman/build
+    cmake ..
+    make
+    sudo make install
 
+    #Install eigen
+    ~/install_codes.sh
+    #Install ceres server
+    cd ~/source/ceres-solver/build
+    cmake ..    
+    #make -j4
+    sudo make install
+fi
 
 echo "source /home/dji/swarm_ws/devel/setup.bash"  >> ~/.bashrc
 sudo cp  $AutoInstallPath/rc.local /etc/
