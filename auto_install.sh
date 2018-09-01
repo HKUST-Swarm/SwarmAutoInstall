@@ -9,8 +9,6 @@ DEP_PATH=/home/dji/source
 if [ ! -d $CONFIG_PATH ]; then
     echo "There is no confied path, will create"
     cp -r $AutoInstallPath/config $CONFIG_PATH
-    cp $AutoInstallPath/autostart_config_template.sh  $CONFIG_PATH/autostart_config.sh
-    chmod a+rw $CONFIG_PATH/autostart_config.sh
 fi
 
 sudo rm -f /etc/init/ttyS0.conf
