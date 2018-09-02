@@ -76,7 +76,7 @@ estimate_td: 1                          # online estimate time offset between ca
 # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
 # When use USB 3.0, we use -0.002375
 # When use USB 2.0, we use -0.029
-td: -0.002375                              
+#td: -0.002375                              
 td: -0.029                              # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
 
 #rolling shutter parameters
