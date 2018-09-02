@@ -93,7 +93,7 @@ pose_graph_save_path: "/home/tony-ws1/output/pose_graph/" # save and load path
 
 #unsynchronization parameters
 estimate_td: 1                          # online estimate time offset between camera and imu
-td: -0.029                              # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
+td: -0.002375                              # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
 
 #rolling shutter parameters
 rolling_shutter: 0                  # 0: global shutter camera, 1: rolling shutter camera
