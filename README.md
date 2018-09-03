@@ -8,6 +8,10 @@ Login to your TX2 with ssh and under home directory
 >
 >bash configure_tx2.sh
 
+For updating
+
+>/home/dji/update_tx2.sh
+
 After code runned, plz restart. That is all fun!
 
 It may need enter passwd when installing
