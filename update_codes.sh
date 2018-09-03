@@ -6,4 +6,9 @@ function update_ros_code {
     git pull -f 
 }
 
+cd /home/dji/SwarmAutoInstall
+git pull -f
 update_ros_code swarm_pkgs
+
+cd $SWARM_WS/src
+catkin_make
