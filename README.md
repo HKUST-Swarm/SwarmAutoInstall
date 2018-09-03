@@ -10,7 +10,7 @@ Login to your TX2 with ssh and under home directory
 
 For updating
 
->/home/dji/update_tx2.sh
+>/home/dji/SwarmAutoInstall/update_tx2.sh
 
 After code runned, plz restart. That is all fun!
 
