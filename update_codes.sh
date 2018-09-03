@@ -2,6 +2,7 @@
 
 SWARM_WS=~/swarm_ws
 function update_ros_code {
+    echo Will pull $1
     cd $SWARM_WS/src/$1
     git pull -f 
 }
