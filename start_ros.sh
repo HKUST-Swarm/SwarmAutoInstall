@@ -68,6 +68,7 @@ fi
 if [ $START_VO_STUFF -eq 1 ]
 then
     echo "Enable chicken blood mode"
+    nvpmodel -m0
     /home/dji/jetson_clocks.sh
     roslaunch djisdkwrapper sdk.launch &> $LOG_PATH/log_sdk.txt &
     echo "sleep 10 for djisdk boot up"    
