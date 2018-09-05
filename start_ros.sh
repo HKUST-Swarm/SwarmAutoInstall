@@ -80,7 +80,7 @@ fi
     
 if [ $START_UWB_STUFF -eq 1 ]
 then
-    roslaunch swarm_vo_fuse swarm_vo_fuse.launch bag_path:="$LOG_PATH" &> $LOG_PATH/log_swarm.txt &
+    roslaunch swarm_vo_fuse swarm_vo_fuse.launch &> $LOG_PATH/log_swarm.txt &
 fi
 
 if [ $START_CONTROL -eq 1 ]
@@ -90,3 +90,7 @@ then
     /home/dji/SwarmAutoInstall/start_controller.sh &> $LOG_PATH/log_contoller.txt &
 fi
 
+if [ $RECORD_BAG -eq 1 ]
+then
+    rosbag record -o $LOG_PATH/swarm_log.bag /vins_estimator/imu_propagate /vins_estimator/odometry /uwb_node/remote_nodes /drone_1/position_cmd /dji_sdk_1/dji_sdk/flight_control_setpoint_generic /swarm_drones/solving_cost /swarm_drones/swarm_drone_fused /swarm_drones/swarm_drone_source_data
+fi
