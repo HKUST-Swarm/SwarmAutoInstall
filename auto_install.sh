@@ -36,17 +36,22 @@ if [ ! -d $DEP_PATH/ceres-solver ]; then
     wget https://dl.dropboxusercontent.com/s/hrq71iwxcuqzkja/SwarmDepends.tgz
     tar -xf SwarmDepends.tgz -C ~/
     #Seems need to Uninstall old eigen3 first 
+    if [ ! -d /usr/local/include/ceres ]; then
+        sudo dpkg --remove --force-depends libeigen3-dev
+        # Install eigen3.3.4
+        cd ~/source/eigen-eigen-5a0156e40feb/build
+        cmake ..
+        make -j4
+        sudo make install
 
-    sudo dpkg --remove --force-depends libeigen3-dev
-    # Install eigen3.3.4
-    cd ~/source/eigen-eigen-5a0156e40feb/build
-    cmake ..
-    make -j4
-    sudo make install
-
-    #And then, we need old eigen back
-    sudo apt-get install libeigen3-dev -y
-
+        #And then, we need old eigen back
+        sudo apt-get install libeigen3-dev -y
+        #Install ceres server
+        cd ~/source/ceres-solver/build
+        cmake ..    
+        #make -j4
+        sudo make install
+    fi
     #Install ros
     #Installing ros
     #Looks like it help dns
@@ -60,14 +65,8 @@ if [ ! -d $DEP_PATH/ceres-solver ]; then
     make
     sudo make install
 
-    #Install ceres server
-    cd ~/source/ceres-solver/build
-    cmake ..    
-    #make -j4
-    sudo make install
 fi
 
-#Install eigen
 $AutoInstallPath/install_codes.sh
 
 echo "source /home/dji/swarm_ws/devel/setup.bash"  >> ~/.bashrc

@@ -89,11 +89,12 @@ g_norm: 9.805       # gravity magnitude
 loop_closure: 0                    # start loop closure
 load_previous_pose_graph: 0        # load and reuse previous pose graph; load from 'pose_graph_save_path'
 fast_relocalization: 0             # useful in real-time and large project
-pose_graph_save_path: "/home/tony-ws1/output/pose_graph/" # save and load path
+pose_graph_save_path: "/home/dji/output/pose_graph/" # save and load path
 
 #unsynchronization parameters
 estimate_td: 1                          # online estimate time offset between camera and imu
-td: -0.029                              # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
+#td: -0.002375                              # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
+td: -0.0029                              # -0.029 for USB2.0, -0.002375 for usb 3.0
 
 #rolling shutter parameters
 rolling_shutter: 0                  # 0: global shutter camera, 1: rolling shutter camera
