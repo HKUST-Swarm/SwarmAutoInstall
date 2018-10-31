@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+source ~/.bashrc
 SWARM_WS=~/swarm_ws
 function update_ros_code {
     echo Will pull $1
