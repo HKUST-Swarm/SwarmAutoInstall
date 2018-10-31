@@ -68,7 +68,7 @@ fi
 if [ $START_VO_STUFF -eq 1 ]
 then
     echo "Enable chicken blood mode"
-    /usr/bin/nvpmodel -m0
+    /usr/sbin/nvpmodel -m0
     /home/dji/jetson_clocks.sh
     roslaunch djisdkwrapper sdk.launch &> $LOG_PATH/log_sdk.txt &
     echo "sleep 10 for djisdk boot up"    
@@ -93,4 +93,9 @@ fi
 if [ $RECORD_BAG -eq 1 ]
 then
     rosbag record -o $LOG_PATH/swarm_log.bag /vins_estimator/imu_propagate /vins_estimator/odometry /uwb_node/remote_nodes /drone_1/position_cmd /dji_sdk_1/dji_sdk/flight_control_setpoint_generic /swarm_drones/solving_cost /swarm_drones/swarm_drone_fused /swarm_drones/swarm_drone_source_data
+fi
+
+if [ $RECORD_BAG -eq 2 ]
+then
+    rosbag record -o $LOG_PATH/swarm_source_log.bag /vins_estimator/imu_propagate /vins_estimator/odometry /swarm_drones/swarm_drone_source_data
 fi
