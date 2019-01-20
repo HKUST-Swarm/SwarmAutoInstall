@@ -8,7 +8,7 @@ export ROS_MASTER_URI=http://localhost:11311
 LOG_PATH=/home/dji/swarm_log/`date +%F_%T`
 CONFIG_PATH=/home/dji/SwarmConfig
 
-source $CONFIG_PATH/autostart_config.sh  
+source $CONFIG_PATH/autostart_config.sh
 
 if [ "$#" -ge 1 ]; then
     export SWARM_START_MODE=$1
@@ -28,13 +28,14 @@ then
     echo "roscore:"$! >> $PID_FILE
     #Sleep 5 wait for core
     sleep 5
-    
+
     echo "Will start camera"
     export START_CAMERA=1
-    export START_UWB_STUFF=0
-    export START_VO_STUFF=0
+    export START_UWB_COMM=0
+    export START_VO_COMM=0
     export START_CONTROL=0
     export START_CAMERA_SYNC=0
+    export START_UWB_FUSE=0
 
     if [ $SWARM_START_MODE -ge 1 ]
     then
@@ -45,19 +46,39 @@ then
 
     if [ $SWARM_START_MODE -ge 2 ]
     then
-        echo "Will start UWB"
-        export START_UWB_STUFF=1
+        echo "Will start Control"
+        export START_CONTROL=1
     fi
 
     if [ $SWARM_START_MODE -ge 3 ]
     then
-        echo "Will start Control"
-        export START_CONTROL=1
+        echo "Will start UWB COMM"
+        export START_UWB_COMM=1
     fi
+
+    if [ $SWARM_START_MODE -ge 4 ]
+    then
+	    echo "Will start UWB FUSE"
+	    export START_UWB_FUSE=1
+    fi
+
+
 else
     exit 0
 fi
 
+
+if [ $START_VO_STUFF -eq 1 ]
+then
+    echo "Enable chicken blood mode"
+    sudo /usr/sbin/nvpmodel -m0
+    sudo /home/dji/jetson_clocks.sh
+    roslaunch dji_sdk sdk.launch &> $LOG_PATH/log_sdk.txt &
+    echo "DJISDK:"$! >> $PID_FILE
+    echo "Wait for DJI SDK boot up"
+    rosrun swarm_vo_fuse swarm_tx2_helper.py
+    echo "DJI SDK Ready"
+fi
 
 
 if [ $START_CAMERA -eq 1 ]
@@ -69,9 +90,9 @@ then
     if [ $START_CAMERA_SYNC -eq 1 ]
     then
         sleep 5
-        sudo kill -9 $PG_PID
+        sudo kill -- $PG_PID
         echo "Start camera in sync mode"
-	    sleep 10
+	    sleep 1.0
         roslaunch swarm_vo_fuse stereo.launch is_sync:=true config_path:=$CONFIG_PATH/camera_config.yaml &>> $LOG_PATH/log_camera.txt &
         echo "PTGREY_SYNC:"$! >> $PID_FILE
     fi
@@ -79,30 +100,34 @@ fi
 
 if [ $START_VO_STUFF -eq 1 ]
 then
-    echo "Enable chicken blood mode"
-    sudo /usr/sbin/nvpmodel -m0
-    sudo /home/dji/jetson_clocks.sh
-    roslaunch dji_sdk sdk.launch &> $LOG_PATH/log_sdk.txt &
-    echo "DJISDK:"$! >> $PID_FILE
-    echo "sleep 10 for djisdk boot up"    
-    sleep 20
-    roslaunch vins_estimator dji_stereo.launch config_path:=$CONFIG_PATH/dji_stereo/dji_stereo.yaml &> $LOG_PATH/log_vo.txt &
-    echo "VINS:"$! >> $PID_FILE    
     sleep 10
-    rosrun swarm_vo_fuse swarm_tx2_helper.py
+    echo "Image ready start VO"
+    roslaunch vins_estimator dji_stereo.launch config_path:=$CONFIG_PATH/dji_stereo/dji_stereo.yaml &> $LOG_PATH/log_vo.txt &
+    echo "VINS:"$! >> $PID_FILE
 fi
-    
-if [ $START_UWB_STUFF -eq 1 ]
+
+if [ $START_UWB_COMM -eq 1 ]
+then
+    roslaunch swarm_drone_proxy uwb_comm.launch &> $LOG_PATH/log_swarm.txt &
+    echo "SWARM_UWB_COMM:"$! >> $PID_FILE
+fi
+
+if [ $START_UWB_FUSE -eq 1 ]
 then
     roslaunch swarm_vo_fuse swarm_vo_fuse.launch &> $LOG_PATH/log_swarm.txt &
-    echo "SWARM_VO_FUSE:"$! >> $PID_FILE    
+    echo "SWARM_VO_FUSE:"$! >> $PID_FILE
 fi
 
 if [ $START_CONTROL -eq 1 ]
 then
     # Should sleep 15 for controller
-    sleep 5
-    /home/dji/SwarmAutoInstall/start_controller.sh &> $LOG_PATH/log_contoller.txt &
+    # sleep 5
+    echo "Start drone_commander"
+    roslaunch drone_commander commander.launch &> $LOG_PATH/log_drone_commander.txt &
+    echo "drone_commander:"$! >> $PID_FILE
+    echo "Start position ctrl"
+    roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
+    echo "drone_pos_ctrl:"$! >> $PID_FILE
 fi
 
 if [ $RECORD_BAG -eq 1 ]

@@ -8,7 +8,7 @@ GPS: 0
 imu_topic: "/dji_sdk_1/dji_sdk/imu"
 image0_topic: "/stereo/left/image"
 image1_topic: "/stereo/right/image" 
-output_path: "/home/dji/output/"
+output_path: "/home/dji/swarm_log_lastest/"
 
 cam0_calib:  "left.yaml"
 cam1_calib:  "right.yaml"
@@ -17,50 +17,49 @@ image_height: 512
    
 
 # Extrinsic parameter between IMU and Camera.
-estimate_extrinsic: 1   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
+estimate_extrinsic: 0   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
                         # 1  Have an initial guess about extrinsic parameters. We will optimize around your initial guess.
                         # 2  Don't know anything about extrinsic parameters. You don't need to give R,T. We will try to calibrate it. Do some rotation movement at beginning.                        
 #If you choose 0 or 1, you should write down the following matrix.
 
-#body_T_cam0: !!opencv-matrix
-#   rows: 4
-#   cols: 4
-#   dt: d
-#   data: [ 0., 0., 1., 0.05,
-#        0., 1., 0., 0.05,
-#        -1., 0., 0., 0.07,
-#        0., 0., 0., 1. ]
-#
-#body_T_cam1: !!opencv-matrix
-#   rows: 4
-#   cols: 4
-#   dt: d
-#   data: [ 0., 0., 1., 0.05,
-#           0., 1., 0., -0.05,
-#           -1., 0., 0., 0.07,
-#            0., 0., 0., 1. ]
+# body_T_cam0: !!opencv-matrix
+#    rows: 4
+#    cols: 4
+#    dt: d
+#    data: [ 0, 0, 1, 0.057,
+#         0, -1, 0, 0.061,
+#         1, 0, 0, 0.12,
+#         0, 0, 0, 1.0 ]
+
+# body_T_cam1: !!opencv-matrix
+#    rows: 4
+#    cols: 4
+#    dt: d
+#    data: [ 0., 0., 1., 0.057,
+#            0., -1., 0., -0.054,
+#            1., 0., 0., 0.12,
+#             0., 0., 0., 1. ]
 
 body_T_cam0: !!opencv-matrix
    rows: 4
    cols: 4
    dt: d
-   data: [ -1.5288386160720258e-02, -3.1592635324270507e-02,
-       9.9938389552857454e-01, 8.0224364315242172e-02,
-       -2.1709989949048897e-03, 9.9949940422351569e-01,
-       3.1563075265273403e-02, 7.8071937859580956e-02,
-       -9.9988076889795474e-01, -1.6871129496412963e-03,
-       -1.5349320438714287e-02, 5.6889174707362315e-02, 0., 0., 0., 1. ]
+   data: [ -2.5746614843593640e-02, -1.5714926359881774e-02,
+       9.9954497293198341e-01, 4.6611261043967775e-02,
+       1.2785413587476278e-02, -9.9979982663681954e-01,
+       -1.5389602216541919e-02, 6.9657130345409310e-02,
+       9.9958673711864199e-01, 1.2383365717352770e-02,
+       2.5942382890117410e-02, 7.0619612724196257e-02, 0., 0., 0., 1. ]
 body_T_cam1: !!opencv-matrix
    rows: 4
    cols: 4
    dt: d
-   data: [ -8.4300912320607324e-03, -1.9171021737968176e-02,
-       9.9978067869275300e-01, 7.7317143289999238e-02,
-       -1.4898694238773961e-02, 9.9970763482063452e-01,
-       1.9043996201229763e-02, -5.8584745736782441e-02,
-       -9.9985347050045237e-01, -1.4734884012277859e-02,
-       -8.7132497580444390e-03, 5.4888708457541131e-02, 0., 0., 0., 1. ]
-
+   data: [ -4.1815542934567462e-02, -2.7920130190612364e-02,
+       9.9873516344385616e-01, 4.4897672272219108e-02,
+       1.7380701121347385e-02, -9.9947854031547823e-01,
+       -2.7213207774361724e-02, -6.3777380167414022e-02,
+       9.9897415962457070e-01, 1.6220782317121561e-02,
+       4.2279009252853328e-02, 7.2802495655711924e-02, 0., 0., 0., 1. ]
 #Multiple thread support
 multiple_thread: 1
 
@@ -94,7 +93,7 @@ pose_graph_save_path: "/home/dji/output/pose_graph/" # save and load path
 #unsynchronization parameters
 estimate_td: 1                          # online estimate time offset between camera and imu
 #td: -0.002375                              # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
-td: -0.0029                              # -0.029 for USB2.0, -0.002375 for usb 3.0
+td: -0.029                              # -0.029 for USB2.0, -0.002375 for usb 3.0
 
 #rolling shutter parameters
 rolling_shutter: 0                  # 0: global shutter camera, 1: rolling shutter camera
