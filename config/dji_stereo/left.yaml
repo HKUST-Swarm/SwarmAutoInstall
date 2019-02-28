@@ -1,17 +1,18 @@
 %YAML:1.0
 ---
-model_type: PINHOLE
+model_type: MEI
 camera_name: camera
 image_width: 640
 image_height: 512
+mirror_parameters:
+   xi: 2.3548459776130399e+00
 distortion_parameters:
-    k1: 0.00952415
-    k2: -0.00687246
-    p1: -0.000253797
-    p2: 0.000732232
-
+   k1: -2.6900769006575104e-01
+   k2: 5.3074468830193289e-01
+   p1: 3.7038314999116392e-04
+   p2: -7.3484077280716121e-04
 projection_parameters:
-    fx: 300.883
-    fy: 300.84
-    cx: 315.411
-    cy: 266.688
+   gamma1: 9.7771170528077221e+02
+   gamma2: 9.7746734427095498e+02
+   u0: 3.2058132262827570e+02
+   v0: 2.5917027685769381e+02

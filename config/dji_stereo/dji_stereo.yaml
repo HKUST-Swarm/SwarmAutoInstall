@@ -17,51 +17,51 @@ image_height: 512
    
 
 # Extrinsic parameter between IMU and Camera.
-estimate_extrinsic: 0   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
+estimate_extrinsic: 1   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
                         # 1  Have an initial guess about extrinsic parameters. We will optimize around your initial guess.
                         # 2  Don't know anything about extrinsic parameters. You don't need to give R,T. We will try to calibrate it. Do some rotation movement at beginning.                        
 #If you choose 0 or 1, you should write down the following matrix.
-
-# body_T_cam0: !!opencv-matrix
-#    rows: 4
-#    cols: 4
-#    dt: d
-#    data: [ 0, 0, 1, 0.057,
-#         0, -1, 0, 0.061,
-#         1, 0, 0, 0.12,
-#         0, 0, 0, 1.0 ]
-
-# body_T_cam1: !!opencv-matrix
-#    rows: 4
-#    cols: 4
-#    dt: d
-#    data: [ 0., 0., 1., 0.057,
-#            0., -1., 0., -0.054,
-#            1., 0., 0., 0.12,
-#             0., 0., 0., 1. ]
 
 body_T_cam0: !!opencv-matrix
    rows: 4
    cols: 4
    dt: d
-   data: [ -2.5746614843593640e-02, -1.5714926359881774e-02,
-       9.9954497293198341e-01, 4.6611261043967775e-02,
-       1.2785413587476278e-02, -9.9979982663681954e-01,
-       -1.5389602216541919e-02, 6.9657130345409310e-02,
-       9.9958673711864199e-01, 1.2383365717352770e-02,
-       2.5942382890117410e-02, 7.0619612724196257e-02, 0., 0., 0., 1. ]
+   data: [ -2.9860226902523879e-02, -2.8067796287838554e-02,
+       9.9915992997161096e-01, 4.6963138092731754e-02,
+       1.0514758816861815e-02, -9.9955918140447131e-01,
+       -2.7764774752316951e-02, 6.8684558718123540e-02,
+       9.9949877773629781e-01, 9.6768632091223817e-03,
+       3.0142190067725672e-02, 6.8963620641618900e-02, 0., 0., 0., 1. ]
 body_T_cam1: !!opencv-matrix
    rows: 4
    cols: 4
    dt: d
-   data: [ -4.1815542934567462e-02, -2.7920130190612364e-02,
-       9.9873516344385616e-01, 4.4897672272219108e-02,
-       1.7380701121347385e-02, -9.9947854031547823e-01,
-       -2.7213207774361724e-02, -6.3777380167414022e-02,
-       9.9897415962457070e-01, 1.6220782317121561e-02,
-       4.2279009252853328e-02, 7.2802495655711924e-02, 0., 0., 0., 1. ]
-#Multiple thread support
-multiple_thread: 1
+   data: [ -3.7239244263084670e-02, -1.1705084897619311e-02,
+       9.9923782438129016e-01, 4.6745388845793621e-02,
+       2.8673542642719770e-02, -9.9953220042073521e-01,
+       -1.0639937706573274e-02, -6.3144421863824324e-02,
+       9.9889492272161984e-01, 2.8255465128416361e-02,
+       3.7557450011234561e-02, 6.9739683892232771e-02, 0., 0., 0., 1. ]
+
+#body_T_cam0: !!opencv-matrix
+#   rows: 4
+#   cols: 4
+#   dt: d
+#   data: [ 0.0, 0.0, 1.0, 0.0633,
+#        0.0, -1.0, 0.0, 0.0762,
+#        1.0, 0.0, 0.0, 0.0567,
+#        0.0, 0.0, 0.0, 1.0 ]
+#
+#body_T_cam1: !!opencv-matrix
+#   rows: 4
+#   cols: 4
+#   dt: d
+#   data: [ 0., 0., 1., 0.0620,
+#           0., -1., 0., -0.060,
+#           1., 0., 0., 0.0581,
+#            0., 0., 0., 1. ]
+
+multiple_thread: 2
 
 #feature traker paprameters
 max_cnt: 100            # max feature number in feature tracking
@@ -88,12 +88,12 @@ g_norm: 9.805       # gravity magnitude
 loop_closure: 0                    # start loop closure
 load_previous_pose_graph: 0        # load and reuse previous pose graph; load from 'pose_graph_save_path'
 fast_relocalization: 0             # useful in real-time and large project
-pose_graph_save_path: "/home/dji/output/pose_graph/" # save and load path
+pose_graph_save_path: "/home/dji/swarm_log_lastest/pose_graph/" # save and load path
 
 #unsynchronization parameters
-estimate_td: 1                          # online estimate time offset between camera and imu
+estimate_td: 0                          # online estimate time offset between camera and imu
 #td: -0.002375                              # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
-td: -0.029                              # -0.029 for USB2.0, -0.002375 for usb 3.0
+td: 0.0063                              # -0.029 for USB2.0, -0.002375 for usb 3.0
 
 #rolling shutter parameters
 rolling_shutter: 0                  # 0: global shutter camera, 1: rolling shutter camera
