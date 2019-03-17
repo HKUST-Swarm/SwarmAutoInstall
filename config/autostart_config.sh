@@ -6,7 +6,7 @@
 #START MODE 2 start camera VO and controller
 #START MODE 3 start camera VO ctrl and uwb comm
 #START MODE 4 start camera VO ctrl and uwb comm, uwb fuse
-export SWARM_START_MODE=3
+export SWARM_START_MODE=5
 export RECORD_BAG=0
 export NODE_ID=2
 
