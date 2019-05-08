@@ -32,41 +32,58 @@ then
     echo "Will start camera"
     export START_CAMERA=1
     export START_UWB_COMM=0
-    export START_VO_COMM=0
     export START_CONTROL=0
     export START_CAMERA_SYNC=0
     export START_UWB_FUSE=0
     export START_DJISDK=0
+    export START_VO_STUFF=0
+    export START_UWB_VICON=0
+    export USE_VICON_CTRL=0
 
     if [ $SWARM_START_MODE -ge 1 ]
     then
         echo "Will start VO"
-        export START_VO_STUFF=1
-        export START_CAMERA_SYNC=1
+        START_VO_STUFF=1
+        START_CAMERA_SYNC=1
     fi
 
     if [ $SWARM_START_MODE -ge 2 ]
     then
         echo "Will start Control"
-        export START_CONTROL=1
+        START_CONTROL=1
     fi
 
     if [ $SWARM_START_MODE -ge 3 ]
     then
         echo "Will start UWB COMM"
-        export START_UWB_COMM=1
+        START_UWB_COMM=1
     fi
 
     if [ $SWARM_START_MODE -ge 4 ]
     then
 	    echo "Will start UWB FUSE"
-	    export START_UWB_FUSE=1
+	    START_UWB_FUSE=1
+    fi
+
+    if [ $SWARM_START_MODE -eq 5 ]
+    then
+        echo "Will start Control with VICON odom and disable before"
+        START_CONTROL=1
+        START_UWB_VICON=1
+        START_DJISDK=1
+        USE_VICON_CTRL=1
+
+        START_CAMERA=0
+        START_UWB_COMM=0
+	    START_UWB_FUSE=0
+        START_VO_STUFF=0
+        START_CAMERA_SYNC=0
     fi
 
 
     if [ $START_CAMERA -eq 1 ]  && [ $CAM_TYPE -eq 0  ]  ||  [ $START_CONTROL -eq 1  ]
     then
-        export START_DJISDK=1    
+        export START_DJISDK=1
         echo "Using Ptgrey Camera or using control, will boot dji sdk"
     fi
 
@@ -75,19 +92,20 @@ else
 fi
 
 
-if [ $START_CAMERA -eq 1 ] || [ $START_VO_FUSE -eq 1] 
-then
-    echo "Is using VO or VO FUSE, enabling chicken blood mode"
-    sudo /usr/sbin/nvpmodel -m0
-    sudo /home/dji/jetson_clocks.sh
-fi
+# if [ $START_CAMERA -eq 1 ] || [ $START_UWB_FUSE -eq 1]
+# then
+    # echo "Is using VO or VO FUSE, enabling chicken blood mode"
+echo "Enabling chicken blood mode"
+sudo /usr/sbin/nvpmodel -m0
+sudo /home/dji/jetson_clocks.sh
+# fi
 
 if [ $START_DJISDK -eq 1 ]
 then
     roslaunch dji_sdk sdk.launch &> $LOG_PATH/log_sdk.txt &
     echo "DJISDK:"$! >> $PID_FILE
-    echo "Wait for DJI SDK boot up"
-    rosrun swarm_vo_fuse swarm_tx2_helper.py
+    echo "Wait for DJI SDK boot up......"
+    #rosrun swarm_vo_fuse swarm_tx2_helper.py
     echo "DJI SDK Ready"
 fi
 
@@ -118,7 +136,7 @@ then
     then
         echo "Will use MYNT Camera"
         source /home/dji/source/MYNT-EYE-S-SDK/wrappers/ros/devel/setup.bash
-        roslaunch mynt_eye_ros_wrapper mynteye.launch request_index:=0 &> $LOG_PATH/log_camera.txt &
+        roslaunch mynt_eye_ros_wrapper mynteye.launch request_index:=1 &> $LOG_PATH/log_camera.txt &
         echo "MYNT_CAMERA:"$! >> $PID_FILE
         sleep 2
     fi
@@ -131,7 +149,7 @@ then
     if [ $CAM_TYPE -eq 0 ]
     then
         echo "No ptgrey VINS imple yet"
-        # roslaunch vins_estimator dji_stereo.launch config_path:=$CONFIG_PATH/dji_stereo/dji_stereo.yaml &> $LOG_PATH/log_vo.txt &    
+        # roslaunch vins_estimator dji_stereo.launch config_path:=$CONFIG_PATH/dji_stereo/dji_stereo.yaml &> $LOG_PATH/log_vo.txt &
     fi
 
     if [ $CAM_TYPE -eq 1 ]
@@ -139,6 +157,12 @@ then
         rosrun vins vins_node /home/dji/SwarmConfig/mini_mynteye_stereo/mini_mynteye_stereo_imu.yaml &> $LOG_PATH/log_vo.txt &
         echo "VINS:"$! >> $PID_FILE
     fi
+fi
+
+if [ $START_UWB_VICON -eq 1 ]
+then
+    echo "Start UWB VO"
+    roslaunch uart_odom uwb_mocap_client.launch &> $LOG_PATH/log_uwb_mocap.txt &
 fi
 
 if [ $START_UWB_COMM -eq 1 ]
@@ -155,14 +179,22 @@ fi
 
 if [ $START_CONTROL -eq 1 ]
 then
-    # Should sleep 15 for controller
-    # sleep 5
-    echo "Start drone_commander"
-    roslaunch drone_commander commander.launch &> $LOG_PATH/log_drone_commander.txt &
-    echo "drone_commander:"$! >> $PID_FILE
-    echo "Start position ctrl"
-    roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
-    echo "drone_pos_ctrl:"$! >> $PID_FILE
+    if [ $USE_VICON_CTRL -eq 1 ]
+    then
+        echo "Start drone_commander with VICON"
+        roslaunch drone_commander commander.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_commander.txt &
+        echo "drone_commander:"$! >> $PID_FILE
+        echo "Start position ctrl with VICON"
+        roslaunch drone_position_control pos_control_vicon.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_position_ctrl.txt &
+        echo "drone_pos_ctrl:"$! >> $PID_FILE
+    else
+        echo "Start drone_commander"
+        roslaunch drone_commander commander.launch &> $LOG_PATH/log_drone_commander.txt &
+        echo "drone_commander:"$! >> $PID_FILE
+        echo "Start position ctrl"
+        roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
+        echo "drone_pos_ctrl:"$! >> $PID_FILE
+    fi
 fi
 
 if [ $RECORD_BAG -eq 1 ]
