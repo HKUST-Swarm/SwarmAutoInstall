@@ -6,5 +6,5 @@ while IFS='' read -r line || [[ -n "$line" ]]; do
 done < /home/dji/swarm_log_lastest/pids.txt
 
 echo "Closing fan"
-sudo nvpmodel -m 1
+# sudo nvpmodel -m 1
 sudo /home/dji/jetson_clocks.sh --restore

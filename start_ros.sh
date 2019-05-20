@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# echo "$(whoami)"
+
+[ "$UID" -eq 0 ] || exec sudo "$0" "$@"
+
 echo "Sourceing..."
 source /opt/ros/kinetic/setup.bash
 source /home/dji/swarm_ws/devel/setup.bash
@@ -39,12 +43,17 @@ then
     export START_VO_STUFF=0
     export START_UWB_VICON=0
     export USE_VICON_CTRL=0
+    export USE_DJI_IMU=0
 
     if [ $SWARM_START_MODE -ge 1 ]
     then
         echo "Will start VO"
         START_VO_STUFF=1
         START_CAMERA_SYNC=1
+        if [ $CAM_TYPE -eq 3 ]
+        then
+            USE_DJI_IMU=1
+        fi
     fi
 
     if [ $SWARM_START_MODE -ge 2 ]
@@ -81,10 +90,10 @@ then
     fi
 
 
-    if [ $START_CAMERA -eq 1 ]  && [ $CAM_TYPE -eq 0  ]  ||  [ $START_CONTROL -eq 1  ]
+    if [ $START_CAMERA -eq 1 ]  && [ $CAM_TYPE -eq 0  ]  ||  [ $START_CONTROL -eq 1  ] || [ $USE_DJI_IMU -eq 1 ]
     then
         export START_DJISDK=1
-        echo "Using Ptgrey Camera or using control, will boot dji sdk"
+        echo "Using Ptgrey Camera, USE DJI IMUor using control, will boot dji sdk"
     fi
 
 else
@@ -140,6 +149,22 @@ then
         echo "MYNT_CAMERA:"$! >> $PID_FILE
         sleep 2
     fi
+
+    if [ $CAM_TYPE -eq 2 ]
+    then
+        echo "Will use bluefox Camera"
+        roslaunch bluefox2 single_node.launch device:=$CAMERA_ID &> $LOG_PATH/log_camera.txt &
+        echo "BLUEFOX:"$! >> $PID_FILE
+    fi
+
+    if [ $CAM_TYPE -eq 3 ]
+    then
+        sleep 30
+        echo "Will use realsense Camera"
+        roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
+        rosrun dynamic_reconfigure dynparam set /camera/stereo_module 'emitter_enabled' false
+        echo "REALSENSE:"$! >> $PID_FILE
+    fi
 fi
 
 if [ $START_VO_STUFF -eq 1 ]
@@ -155,6 +180,12 @@ then
     if [ $CAM_TYPE -eq 1 ]
     then
         rosrun vins vins_node /home/dji/SwarmConfig/mini_mynteye_stereo/mini_mynteye_stereo_imu.yaml &> $LOG_PATH/log_vo.txt &
+        echo "VINS:"$! >> $PID_FILE
+    fi
+
+    if [ $CAM_TYPE -eq 3 ]
+    then
+        rosrun vins vins_node /home/dji/SwarmConfig/realsense/realsense_n3_unsync.yaml &> $LOG_PATH/log_vo.txt &
         echo "VINS:"$! >> $PID_FILE
     fi
 fi
