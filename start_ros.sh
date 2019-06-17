@@ -159,7 +159,6 @@ then
 
     if [ $CAM_TYPE -eq 3 ]
     then
-        sleep 30
         echo "Will use realsense Camera"
         roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
         rosrun dynamic_reconfigure dynparam set /camera/stereo_module 'emitter_enabled' false
@@ -193,12 +192,13 @@ fi
 if [ $START_UWB_VICON -eq 1 ]
 then
     echo "Start UWB VO"
-    roslaunch uart_odom uwb_mocap_client.launch &> $LOG_PATH/log_uwb_mocap.txt &
+    roslaunch mocap_optitrack mocap_uwbclient.launch &> $LOG_PATH/log_uwb_mocap.txt &
 fi
 
 if [ $START_UWB_COMM -eq 1 ]
 then
-    roslaunch swarm_drone_proxy uwb_comm.launch &> $LOG_PATH/log_swarm.txt &
+    # roslaunch swarm_drone_proxy uwb_comm.launch &> $LOG_PATH/log_swarm.txt &
+    roslaunch mocap_optitrack mocap_uwbclient.launch &> $LOG_PATH/log_uwb_comm.txt &
     echo "SWARM_UWB_COMM:"$! >> $PID_FILE
 fi
 
@@ -218,6 +218,7 @@ then
         echo "Start position ctrl with VICON"
         roslaunch drone_position_control pos_control_vicon.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_position_ctrl.txt &
         echo "drone_pos_ctrl:"$! >> $PID_FILE
+
     else
         echo "Start drone_commander"
         roslaunch drone_commander commander.launch &> $LOG_PATH/log_drone_commander.txt &
@@ -226,6 +227,11 @@ then
         roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
         echo "drone_pos_ctrl:"$! >> $PID_FILE
     fi
+
+    echo "Start SwarmPilot"
+    rosrun swarm_pilot swarm_pilot_node &> $LOG_PATH/log_swarm_pilot.txt &
+    echo "swarm_pilot:"$! >> $PID_FILE
+
 fi
 
 if [ $RECORD_BAG -eq 1 ]
