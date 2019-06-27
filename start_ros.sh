@@ -39,7 +39,7 @@ then
     export START_CONTROL=0
     export START_CAMERA_SYNC=0
     export START_UWB_FUSE=0
-    export START_DJISDK=0
+    export START_DJISDK=1
     export START_VO_STUFF=0
     export START_UWB_VICON=0
     export USE_VICON_CTRL=0
@@ -161,6 +161,8 @@ then
     then
         echo "Will use realsense Camera"
         roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
+        echo "writing camera config"
+        /home/dji/SwarmAutoInstall/rs_write_cameraconfig.py
         rosrun dynamic_reconfigure dynparam set /camera/stereo_module 'emitter_enabled' false
         echo "REALSENSE:"$! >> $PID_FILE
     fi
@@ -197,15 +199,16 @@ fi
 
 if [ $START_UWB_COMM -eq 1 ]
 then
-    # roslaunch swarm_drone_proxy uwb_comm.launch &> $LOG_PATH/log_swarm.txt &
-    roslaunch mocap_optitrack mocap_uwbclient.launch &> $LOG_PATH/log_uwb_comm.txt &
+    roslaunch localization_proxy uwb_comm.launch &> $LOG_PATH/log_comm.txt &
+    roslaunch swarm_detection swarm_detect.launch &> $LOG_PATH/log_swarm_detection.txt &
+    # roslaunch mocap_optitrack mocap_uwbclient.launch &> $LOG_PATH/log_uwb_comm.txt &
     echo "SWARM_UWB_COMM:"$! >> $PID_FILE
 fi
 
 if [ $START_UWB_FUSE -eq 1 ]
 then
-    roslaunch swarm_vo_fuse swarm_vo_fuse.launch &> $LOG_PATH/log_swarm.txt &
-    echo "SWARM_VO_FUSE:"$! >> $PID_FILE
+    # roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
+    echo "SWARM_LOCAL:"$! >> $PID_FILE
 fi
 
 if [ $START_CONTROL -eq 1 ]
