@@ -15,6 +15,18 @@ rosbag record -o sf.bag /swarm_drones/swarm_frame \
     /swarm_mocap/SwarmNodeOdom6 \
     /swarm_mocap/SwarmNodeOdom7 \
     /swarm_mocap/SwarmNodeOdom8 \
-    /swarm_mocap/SwarmNodeOdom9
+    /swarm_mocap/SwarmNodeOdom9 \
+    /swarm_detection/armarker_detected \
+    /swarm_detection/relative_pose_001 \
+    /swarm_detection/relative_pose_002 \
+    /swarm_detection/relative_pose_003 \
+    /swarm_detection/relative_pose_004 \
+    /swarm_detection/relative_pose_005 \
+    /swarm_detection/relative_pose_006 \
+    /swarm_detection/relative_pose_007 \
+    /swarm_detection/relative_pose_008 \
+    /swarm_detection/relative_pose_009 \
+    /swarm_detection/swarm_detected
 
-kill -- $!
+
+kill -- $OPTI_PID

@@ -200,9 +200,10 @@ fi
 if [ $START_UWB_COMM -eq 1 ]
 then
     roslaunch localization_proxy uwb_comm.launch &> $LOG_PATH/log_comm.txt &
-    roslaunch swarm_detection swarm_detect.launch &> $LOG_PATH/log_swarm_detection.txt &
-    # roslaunch mocap_optitrack mocap_uwbclient.launch &> $LOG_PATH/log_uwb_comm.txt &
     echo "SWARM_UWB_COMM:"$! >> $PID_FILE
+    roslaunch swarm_detection swarm_detect.launch &> $LOG_PATH/log_swarm_detection.txt &
+    echo "SWARM_DETECT:"$! >> $PID_FILE
+    # roslaunch mocap_optitrack mocap_uwbclient.launch &> $LOG_PATH/log_uwb_comm.txt &
 fi
 
 if [ $START_UWB_FUSE -eq 1 ]
