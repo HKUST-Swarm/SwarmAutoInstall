@@ -1,10 +1,9 @@
 #!/bin/bash
-rosrun mocap_optitrack UWBViconClient.py &
+roslaunch mocap_optitrack mocap.launch &
+#rosrun mocap_optitrack UWBViconClient.py &
 OPTI_PID=$!
 sleep 3
-rosbag record -o sf.bag /swarm_drones/swarm_frame \
-    /swarm_drones/swarm_frame_without_detection \
-    /vins_estimator/imu_propagate \
+rosbag record -o swarm_$1.bag /vins_estimator/imu_propagate \
     /vins_estimator/odometry \
     /swarm_mocap/SwarmNodeOdom0 \
     /swarm_mocap/SwarmNodeOdom1 \
@@ -26,7 +25,11 @@ rosbag record -o sf.bag /swarm_drones/swarm_frame \
     /swarm_detection/relative_pose_007 \
     /swarm_detection/relative_pose_008 \
     /swarm_detection/relative_pose_009 \
-    /swarm_detection/swarm_detected
-
+    /swarm_detection/swarm_detected \
+    /uwb_node/remote_nodes \
+    /uwb_node/time_ref \
+    /uwb_node/incoming_broadcast_data
+#/swarm_drones/swarm_frame_predict \
+# /swarm_drones/swarm_frame \
 
 kill -- $OPTI_PID

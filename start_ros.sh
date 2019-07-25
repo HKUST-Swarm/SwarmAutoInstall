@@ -113,9 +113,6 @@ if [ $START_DJISDK -eq 1 ]
 then
     roslaunch dji_sdk sdk.launch &> $LOG_PATH/log_sdk.txt &
     echo "DJISDK:"$! >> $PID_FILE
-    echo "Wait for DJI SDK boot up......"
-    #rosrun swarm_vo_fuse swarm_tx2_helper.py
-    echo "DJI SDK Ready"
 fi
 
 
@@ -127,7 +124,7 @@ then
     then
         echo "Will use pointgrey Camera"
         echo "Start Camera in unsync mode"
-        roslaunch swarm_vo_fuse stereo.launch is_sync:=false config_path:=$CONFIG_PATH/camera_config.yaml &> $LOG_PATH/log_camera.txt &
+        #roslaunch swarm_vo_fuse stereo.launch is_sync:=false config_path:=$CONFIG_PATH/camera_config.yaml &> $LOG_PATH/log_camera.txt &
         PG_PID=$!
         echo "PTGREY_UNSYNC:"$! >> $PID_FILE
         if [ $START_CAMERA_SYNC -eq 1 ]
@@ -136,7 +133,7 @@ then
             sudo kill -- $PG_PID
             echo "Start camera in sync mode"
             sleep 1.0
-            roslaunch swarm_vo_fuse stereo.launch is_sync:=true config_path:=$CONFIG_PATH/camera_config.yaml &>> $LOG_PATH/log_camera.txt &
+            #roslaunch swarm_vo_fuse stereo.launch is_sync:=true config_path:=$CONFIG_PATH/camera_config.yaml &>> $LOG_PATH/log_camera.txt &
             echo "PTGREY_SYNC:"$! >> $PID_FILE
         fi
     fi
@@ -208,7 +205,7 @@ fi
 
 if [ $START_UWB_FUSE -eq 1 ]
 then
-    # roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
+    roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
     echo "SWARM_LOCAL:"$! >> $PID_FILE
 fi
 
