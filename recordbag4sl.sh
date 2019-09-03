@@ -1,20 +1,20 @@
 #!/bin/bash
-roslaunch mocap_optitrack mocap.launch &
+#roslaunch mocap_optitrack mocap.launch &
 #rosrun mocap_optitrack UWBViconClient.py &
-OPTI_PID=$!
+#OPTI_PID=$!
 sleep 3
 rosbag record -o swarm_$1.bag /vins_estimator/imu_propagate \
     /vins_estimator/odometry \
-    /swarm_mocap/SwarmNodeOdom0 \
-    /swarm_mocap/SwarmNodeOdom1 \
-    /swarm_mocap/SwarmNodeOdom2 \
-    /swarm_mocap/SwarmNodeOdom3 \
-    /swarm_mocap/SwarmNodeOdom4 \
-    /swarm_mocap/SwarmNodeOdom5 \
-    /swarm_mocap/SwarmNodeOdom6 \
-    /swarm_mocap/SwarmNodeOdom7 \
-    /swarm_mocap/SwarmNodeOdom8 \
-    /swarm_mocap/SwarmNodeOdom9 \
+    /swarm_mocap/SwarmNodePose0 \
+    /swarm_mocap/SwarmNodePose1 \
+    /swarm_mocap/SwarmNodePose2 \
+    /swarm_mocap/SwarmNodePose3 \
+    /swarm_mocap/SwarmNodePose4 \
+    /swarm_mocap/SwarmNodePose5 \
+    /swarm_mocap/SwarmNodePose6 \
+    /swarm_mocap/SwarmNodePose7 \
+    /swarm_mocap/SwarmNodePose8 \
+    /swarm_mocap/SwarmNodePose9 \
     /swarm_detection/armarker_detected \
     /swarm_detection/relative_pose_001 \
     /swarm_detection/relative_pose_002 \
@@ -28,8 +28,9 @@ rosbag record -o swarm_$1.bag /vins_estimator/imu_propagate \
     /swarm_detection/swarm_detected \
     /uwb_node/remote_nodes \
     /uwb_node/time_ref \
-    /uwb_node/incoming_broadcast_data
-#/swarm_drones/swarm_frame_predict \
-# /swarm_drones/swarm_frame \
+    /uwb_node/incoming_broadcast_data \
+    /camera/infra1/image_rect_raw \
+    /camera/infra2/image_rect_raw \
+    /camera/depth/image_rect_raw
 
-kill -- $OPTI_PID
+#kill -- $OPTI_PID

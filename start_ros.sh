@@ -89,6 +89,21 @@ then
         START_CAMERA_SYNC=0
     fi
 
+    if [ $SWARM_START_MODE -eq 9 ]
+    then
+        echo "Use for record bag for dl"
+        START_CONTROL=0
+        START_UWB_VICON=0
+        START_DJISDK=1
+        USE_VICON_CTRL=1
+
+        START_CAMERA=1
+        START_UWB_COMM=1
+	    START_UWB_FUSE=0
+        START_VO_STUFF=0
+        START_CAMERA_SYNC=0
+
+    fi
 
     if [ $START_CAMERA -eq 1 ]  && [ $CAM_TYPE -eq 0  ]  ||  [ $START_CONTROL -eq 1  ] || [ $USE_DJI_IMU -eq 1 ]
     then
@@ -177,13 +192,13 @@ then
 
     if [ $CAM_TYPE -eq 1 ]
     then
-        rosrun vins vins_node /home/dji/SwarmConfig/mini_mynteye_stereo/mini_mynteye_stereo_imu.yaml &> $LOG_PATH/log_vo.txt &
+        taskset -c 1-4 rosrun vins vins_node /home/dji/SwarmConfig/mini_mynteye_stereo/mini_mynteye_stereo_imu.yaml &> $LOG_PATH/log_vo.txt &
         echo "VINS:"$! >> $PID_FILE
     fi
 
     if [ $CAM_TYPE -eq 3 ]
     then
-        rosrun vins vins_node /home/dji/SwarmConfig/realsense/realsense_n3_unsync.yaml &> $LOG_PATH/log_vo.txt &
+        taskset -c 1-4 rosrun vins vins_node /home/dji/SwarmConfig/realsense/realsense_n3_unsync.yaml &> $LOG_PATH/log_vo.txt &
         echo "VINS:"$! >> $PID_FILE
     fi
 fi
@@ -198,14 +213,15 @@ if [ $START_UWB_COMM -eq 1 ]
 then
     roslaunch localization_proxy uwb_comm.launch &> $LOG_PATH/log_comm.txt &
     echo "SWARM_UWB_COMM:"$! >> $PID_FILE
-    roslaunch swarm_detection swarm_detect.launch &> $LOG_PATH/log_swarm_detection.txt &
-    echo "SWARM_DETECT:"$! >> $PID_FILE
-    # roslaunch mocap_optitrack mocap_uwbclient.launch &> $LOG_PATH/log_uwb_comm.txt &
 fi
 
 if [ $START_UWB_FUSE -eq 1 ]
 then
-    roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
+
+    #roslaunch swarm_detection swarm_detect.launch &> $LOG_PATH/log_swarm_detection.txt &
+    taskset -c 5-6 roslaunch swarm_yolo drone_detector.launch &> $LOG_PATH/log_swarm_detection.txt &
+    echo "SWARM_DETECT:"$! >> $PID_FILE
+    taskset -c 5-6 roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
     echo "SWARM_LOCAL:"$! >> $PID_FILE
 fi
 
