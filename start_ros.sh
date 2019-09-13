@@ -253,7 +253,9 @@ fi
 
 if [ $RECORD_BAG -eq 1 ]
 then
-    rosbag record -o $LOG_PATH/swarm_log.bag /vins_estimator/imu_propagate /vins_estimator/odometry /uwb_node/remote_nodes /drone_1/position_cmd /dji_sdk_1/dji_sdk/flight_control_setpoint_generic /swarm_drones/solving_cost /swarm_drones/swarm_drone_fused /swarm_drones/swarm_drone_source_data
+    rosbag record -o /ssd/bags/swarm_vicon_bags/swarm_log.bag /vins_estimator/imu_propagate /vins_estimator/odometry  /swarm_drones/swarm_drone_fused /swarm_drones/swarm_drone_fused_relative /swarm_drones/swarm_frame /swarm_drones/swarm_frame_predict /uwb_node/time_ref &
+    echo "rosbag:"$! >> $PID_FILE
+
 fi
 
 if [ $RECORD_BAG -eq 2 ]
