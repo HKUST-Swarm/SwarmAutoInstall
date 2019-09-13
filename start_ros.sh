@@ -174,7 +174,7 @@ then
         echo "Will use realsense Camera"
         roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
         echo "writing camera config"
-        /home/dji/SwarmAutoInstall/rs_write_cameraconfig.py
+        #/home/dji/SwarmAutoInstall/rs_write_cameraconfig.py
         rosrun dynamic_reconfigure dynparam set /camera/stereo_module 'emitter_enabled' false
         echo "REALSENSE:"$! >> $PID_FILE
     fi
