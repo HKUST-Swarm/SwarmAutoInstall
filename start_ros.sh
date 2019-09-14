@@ -267,5 +267,5 @@ fi
 
 if [ $RECORD_BAG -eq 2 ]
 then
-    rosbag record -o $LOG_PATH/swarm_source_log.bag /vins_estimator/imu_propagate /vins_estimator/odometry /swarm_drones/swarm_drone_source_data
+    rosbag record -o $LOG_PATH/swarm_source_log.bag /swarm_drones/swarm_frame /swarm_drones/swarm_frame_predict /vins_estimator/imu_propagate /vins_estimator/odometry
 fi
