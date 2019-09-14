@@ -243,6 +243,8 @@ then
         echo "Start position ctrl"
         roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
         echo "drone_pos_ctrl:"$! >> $PID_FILE
+        rosrun traj_generator traj_test $> $LOG_PATH/log_traj.txt &
+        echo "traj":$! >> $PID_FILE
     fi
 
     echo "Start SwarmPilot"
@@ -267,5 +269,5 @@ fi
 
 if [ $RECORD_BAG -eq 2 ]
 then
-    rosbag record -o /ssd/bags/swarm_vicon_bags/swarm_source_log.bag /swarm_drones/swarm_frame /swarm_drones/swarm_frame_predict /vins_estimator/imu_propagate /vins_estimator/odometry
+    rosbag record -o /ssd/bags/swarm_vicon_bags/swarm_source_log.bag /swarm_drones/swarm_frame /swarm_drones/swarm_frame_predict /vins_estimator/imu_propagate /vins_estimator/odometry &
 fi
