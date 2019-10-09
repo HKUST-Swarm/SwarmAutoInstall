@@ -9,6 +9,6 @@ sudo iwconfig wlan0 channel 4
 sudo iwconfig wlan0 essid 'SwarmNet'
 sudo ip link set wlan0 up
 sudo iwconfig wlan0 ap 32:72:C5:C8:D1:BE
-sudo ip addr add 10.10.1.$1/24 dev wlan0
+sudo ip addr add 10.10.1.$1/24 broadcast 10.10.1.255 dev wlan0
 
 
