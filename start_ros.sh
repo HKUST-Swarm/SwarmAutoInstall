@@ -247,7 +247,7 @@ then
         echo "Start position ctrl"
         roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
         echo "drone_pos_ctrl:"$! >> $PID_FILE
-        rosrun traj_generator traj_test $> $LOG_PATH/log_traj.txt &
+        rosrun traj_generator traj_test &> $LOG_PATH/log_traj.txt &
         echo "traj":$! >> $PID_FILE
     fi
 
