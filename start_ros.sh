@@ -18,6 +18,7 @@ if [ "$#" -ge 1 ]; then
     export SWARM_START_MODE=$1
     echo "Start swarm with MODE" $1
 fi
+
 if [ $SWARM_START_MODE -ge 0 ]
 then
     sudo mkdir -p $LOG_PATH
@@ -115,6 +116,9 @@ else
     exit 0
 fi
 
+if [ $CONFIG_NETWORK -eq 1 ]; then
+    /home/dji/SwarmAutoInstall/setup_adhoc.sh $NODE_ID &> $LOG_PATH/log_network.txt
+fi
 
 # if [ $START_CAMERA -eq 1 ] || [ $START_UWB_FUSE -eq 1]
 # then
