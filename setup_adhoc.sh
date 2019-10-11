@@ -12,6 +12,7 @@ sudo iwconfig wlan0 essid 'swarm-mesh-network'
 sudo iwconfig wlan0 ap 02:72:C5:C8:D1:BE
 sudo ip addr add 10.10.1.$1/24 broadcast 10.10.1.255 dev wlan0
 
+ip route add default via 10.10.1.10 dev wlan0
 
 sleep 1
 sudo modprobe batman-adv
@@ -28,3 +29,4 @@ sudo alfred -m -i bat0 &
 sudo batadv-vis -i bat0 -s &
 
 ping 10.10.0.$1 -c 10
+
