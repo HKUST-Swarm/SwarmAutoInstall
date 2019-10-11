@@ -12,9 +12,16 @@ sudo iwconfig wlan0 ap 02:72:C5:C8:D1:BE
 sudo ip addr add 10.10.1.$1/24 broadcast 10.10.1.255 dev wlan0
 
 
+sleep 2
+sudo modprobe batman-adv
+sleep 2
+
 sudo batctl if add wlan0
+sleep 2
 sudo ip link set up dev bat0
+sleep 2
 sudo ifconfig bat0 10.10.0.$1/24
 
+sleep 2
 sudo alfred -m -i bat0 &
 sudo batadv-vis -i bat0 -s &
