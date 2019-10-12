@@ -6,7 +6,7 @@ sudo ip link set wlan0 down
 sudo ip link set wlan0 up
 sudo iwconfig wlan0 mode ad-hoc
 sudo ifconfig wlan0 mtu 1560
-sudo iwconfig wlan0 channel 4
+sudo iwconfig wlan0 channel 13
 sudo iwconfig wlan0 essid 'swarm-mesh-network'
 #sudo ip link set wlan0 up
 sudo iwconfig wlan0 ap 02:72:C5:C8:D1:BE
@@ -28,5 +28,7 @@ sleep 1
 sudo alfred -m -i bat0 &
 sudo batadv-vis -i bat0 -s &
 
-ping 10.10.0.$1 -c 10
-
+for N in {1..10}
+do
+    ping 10.10.0.$N -c 3
+done
