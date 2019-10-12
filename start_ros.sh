@@ -117,7 +117,9 @@ else
 fi
 
 if [ $CONFIG_NETWORK -eq 1 ]; then
-    /home/dji/SwarmAutoInstall/setup_adhoc.sh $NODE_ID &> $LOG_PATH/log_network.txt
+    /home/dji/SwarmAutoInstall/setup_adhoc.sh $NODE_ID &> $LOG_PATH/log_network.txt &
+    echo "Wait 10 for network setup"
+    sleep 10
 fi
 
 # if [ $START_CAMERA -eq 1 ] || [ $START_UWB_FUSE -eq 1]

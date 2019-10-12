@@ -28,7 +28,10 @@ sleep 1
 sudo alfred -m -i bat0 &
 sudo batadv-vis -i bat0 -s &
 
-for N in {1..10}
-do
-    ping 10.10.0.$N -c 3
+
+while true; do
+    for N in {1..10}
+    do
+        ping 10.10.0.$N -c 3
+    done
 done
