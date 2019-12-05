@@ -71,12 +71,17 @@ then
 
     if [ $SWARM_START_MODE -ge 4 ]
     then
-	    echo "Will start UWB FUSE"
+	    echo "Will start Swarm Localization"
 	    START_UWB_FUSE=1
+    fi
+
+    if [ $SWARM_START_MODE -ge 5 ]
+    then
+	    echo "Will start swarm loop"
         START_SWARM_LOOP=1
     fi
 
-    if [ $SWARM_START_MODE -eq 5 ]
+    if [ $SWARM_START_MODE -eq 8 ]
     then
         echo "Will start Control with VICON odom and disable before"
         START_CONTROL=1
@@ -128,7 +133,7 @@ sudo /home/dji/jetson_clocks.sh
 
 if [ $START_DJISDK -eq 1 ]
 then
-    roslaunch dji_sdk sdk.launch &> $LOG_PATH/log_sdk.txt &
+    taskset -c 1-4 roslaunch dji_sdk sdk.launch &> $LOG_PATH/log_sdk.txt &
     echo "DJISDK:"$! >> $PID_FILE
 fi
 
@@ -174,7 +179,7 @@ then
     if [ $CAM_TYPE -eq 3 ]
     then
         echo "Will use realsense Camera"
-        taskset -c 1-3  roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
+        taskset -c 5-6  roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
         echo "writing camera config"
         #/home/dji/SwarmAutoInstall/rs_write_cameraconfig.py
         rosrun dynamic_reconfigure dynparam set /camera/stereo_module 'emitter_enabled' false
@@ -185,7 +190,7 @@ fi
 if [ $START_SWARM_LOOP -eq 1 ]
 then
     echo "Will start swarm loop"
-    roslaunch swarm_loop loop.launch &> $LOG_PATH/log_swarm_loop.txt &
+    taskset -c 1-4 roslaunch swarm_loop loop.launch &> $LOG_PATH/log_swarm_loop.txt &
     sleep 30
 fi
 
@@ -201,7 +206,7 @@ then
 
     if [ $CAM_TYPE -eq 1 ]
     then
-        taskset -c 1-4 rosrun vins vins_node /home/dji/SwarmConfig/mini_mynteye_stereo/mini_mynteye_stereo_imu.yaml &> $LOG_PATH/log_vo.txt &
+        taskset -c 5-6 rosrun vins vins_node /home/dji/SwarmConfig/mini_mynteye_stereo/mini_mynteye_stereo_imu.yaml &> $LOG_PATH/log_vo.txt &
         echo "VINS:"$! >> $PID_FILE
     fi
 
@@ -221,7 +226,7 @@ fi
 
 if [ $START_UWB_COMM -eq 1 ]
 then
-    roslaunch localization_proxy uwb_comm.launch &> $LOG_PATH/log_comm.txt &
+    taskset -c 1-4 roslaunch localization_proxy uwb_comm.launch &> $LOG_PATH/log_comm.txt &
     echo "SWARM_UWB_COMM:"$! >> $PID_FILE
 fi
 
@@ -230,7 +235,7 @@ then
 
     #taskset -c 5-6 roslaunch swarm_yolo drone_detector.launch &> $LOG_PATH/log_swarm_detection.txt &
     echo "SWARM_DETECT:"$! >> $PID_FILE
-    taskset -c 5-6 roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
+    taskset -c 1-4 roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
     echo "SWARM_LOCAL:"$! >> $PID_FILE
 fi
 
@@ -239,18 +244,18 @@ then
     if [ $USE_VICON_CTRL -eq 1 ]
     then
         echo "Start drone_commander with VICON"
-        roslaunch drone_commander commander.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_commander.txt &
+        taskset -c 1-4 roslaunch drone_commander commander.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_commander.txt &
         echo "drone_commander:"$! >> $PID_FILE
         echo "Start position ctrl with VICON"
-        roslaunch drone_position_control pos_control_vicon.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_position_ctrl.txt &
+        taskset -c 1-4 roslaunch drone_position_control pos_control_vicon.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_position_ctrl.txt &
         echo "drone_pos_ctrl:"$! >> $PID_FILE
 
     else
         echo "Start drone_commander"
-        roslaunch drone_commander commander.launch &> $LOG_PATH/log_drone_commander.txt &
+        taskset -c 1-4 roslaunch drone_commander commander.launch &> $LOG_PATH/log_drone_commander.txt &
         echo "drone_commander:"$! >> $PID_FILE
         echo "Start position ctrl"
-        roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
+        taskset -c 1-4 roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
         echo "drone_pos_ctrl:"$! >> $PID_FILE
         rosrun traj_generator traj_test &> $LOG_PATH/log_traj.txt &
         echo "traj":$! >> $PID_FILE
