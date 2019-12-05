@@ -44,6 +44,7 @@ then
     export START_UWB_VICON=0
     export USE_VICON_CTRL=0
     export USE_DJI_IMU=0
+    export START_SWARM_LOOP=0
 
     if [ $SWARM_START_MODE -ge 1 ]
     then
@@ -72,6 +73,7 @@ then
     then
 	    echo "Will start UWB FUSE"
 	    START_UWB_FUSE=1
+        START_SWARM_LOOP=1
     fi
 
     if [ $SWARM_START_MODE -eq 5 ]
@@ -172,12 +174,19 @@ then
     if [ $CAM_TYPE -eq 3 ]
     then
         echo "Will use realsense Camera"
-        roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
+        taskset -c 1-3  roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
         echo "writing camera config"
         #/home/dji/SwarmAutoInstall/rs_write_cameraconfig.py
         rosrun dynamic_reconfigure dynparam set /camera/stereo_module 'emitter_enabled' false
         echo "REALSENSE:"$! >> $PID_FILE
     fi
+fi
+
+if [ $START_SWARM_LOOP -eq 1 ]
+then
+    echo "Will start swarm loop"
+    roslaunch swarm_loop loop.launch &> $LOG_PATH/log_swarm_loop.txt &
+    sleep 30
 fi
 
 if [ $START_VO_STUFF -eq 1 ]
@@ -187,7 +196,7 @@ then
     if [ $CAM_TYPE -eq 0 ]
     then
         echo "No ptgrey VINS imple yet"
-        # roslaunch vins_estimator dji_stereo.launch config_path:=$CONFIG_PATH/dji_stereo/dji_stereo.yaml &> $LOG_PATH/log_vo.txt &
+        roslaunch vins nodelet_realsense_full.launch &> $LOG_PATH/log_vo.txt &
     fi
 
     if [ $CAM_TYPE -eq 1 ]
@@ -198,8 +207,9 @@ then
 
     if [ $CAM_TYPE -eq 3 ]
     then
-        taskset -c 1-4 rosrun vins vins_node /home/dji/SwarmConfig/realsense/realsense_n3_unsync.yaml &> $LOG_PATH/log_vo.txt &
-        echo "VINS:"$! >> $PID_FILE
+        #taskset -c 1-4 rosrun vins vins_node /home/dji/SwarmConfig/realsense/realsense_n3_unsync.yaml &> $LOG_PATH/log_vo.txt &
+        #echo "VINS:"$! >> $PID_FILE
+        roslaunch vins nodelet_realsense_full.launch &> $LOG_PATH/log_vo.txt &
     fi
 fi
 
@@ -218,8 +228,7 @@ fi
 if [ $START_UWB_FUSE -eq 1 ]
 then
 
-    #roslaunch swarm_detection swarm_detect.launch &> $LOG_PATH/log_swarm_detection.txt &
-    taskset -c 5-6 roslaunch swarm_yolo drone_detector.launch &> $LOG_PATH/log_swarm_detection.txt &
+    #taskset -c 5-6 roslaunch swarm_yolo drone_detector.launch &> $LOG_PATH/log_swarm_detection.txt &
     echo "SWARM_DETECT:"$! >> $PID_FILE
     taskset -c 5-6 roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
     echo "SWARM_LOCAL:"$! >> $PID_FILE
@@ -270,4 +279,10 @@ fi
 if [ $RECORD_BAG -eq 2 ]
 then
     rosbag record -o /ssd/bags/swarm_vicon_bags/swarm_source_log.bag /swarm_drones/swarm_frame /swarm_drones/swarm_frame_predict /vins_estimator/imu_propagate /vins_estimator/odometry &
+fi
+
+if [ $RECORD_BAG -eq 3 ]
+then
+    rosbag record -o /ssd/bags/swarm_vicon_bags/swarm_loop_log.bag /dji_sdk_1/dji_sdk/imu /camera/infra1/image_rect_raw /camera/infra2/image_rect_raw &
+    echo "rosbag:"$! >> $PID_FILE
 fi
