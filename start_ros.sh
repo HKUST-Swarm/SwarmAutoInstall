@@ -31,8 +31,8 @@ then
     echo "Start ros core"
     roscore &> $LOG_PATH/log_roscore.txt &
     echo "roscore:"$! >> $PID_FILE
-    #Sleep 5 wait for core
-    sleep 5
+    #/bin/sleep 5 wait for core
+    /bin/sleep 15
 
     echo "Will start camera"
     export START_CAMERA=1
@@ -123,10 +123,11 @@ else
     exit 0
 fi
 
-if [ $CONFIG_NETWORK -eq 1 ]; then
+if [ $CONFIG_NETWORK -eq 1 ]
+then
     /home/dji/SwarmAutoInstall/setup_adhoc.sh $NODE_ID &> $LOG_PATH/log_network.txt &
     echo "Wait 10 for network setup"
-    sleep 10
+    /bin/sleep 10
 fi
 
 # if [ $START_CAMERA -eq 1 ] || [ $START_UWB_FUSE -eq 1]
@@ -157,10 +158,10 @@ then
         echo "PTGREY_UNSYNC:"$! >> $PID_FILE
         if [ $START_CAMERA_SYNC -eq 1 ]
         then
-            sleep 5
+            /bin/sleep 5
             sudo kill -- $PG_PID
             echo "Start camera in sync mode"
-            sleep 1.0
+            /bin/sleep 1.0
             #roslaunch swarm_vo_fuse stereo.launch is_sync:=true config_path:=$CONFIG_PATH/camera_config.yaml &>> $LOG_PATH/log_camera.txt &
             echo "PTGREY_SYNC:"$! >> $PID_FILE
         fi
@@ -172,7 +173,7 @@ then
         source /home/dji/source/MYNT-EYE-S-SDK/wrappers/ros/devel/setup.bash
         roslaunch mynt_eye_ros_wrapper mynteye.launch request_index:=1 &> $LOG_PATH/log_camera.txt &
         echo "MYNT_CAMERA:"$! >> $PID_FILE
-        sleep 2
+        /bin/sleep 2
     fi
 
     if [ $CAM_TYPE -eq 2 ]
@@ -186,10 +187,12 @@ then
     then
         echo "Will use realsense Camera"
         taskset -c 5-6  roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
+        echo "REALSENSE:"$! >> $PID_FILE
+
+        /bin/sleep 10
         echo "writing camera config"
         #/home/dji/SwarmAutoInstall/rs_write_cameraconfig.py
-        rosrun dynamic_reconfigure dynparam set /camera/stereo_module 'emitter_enabled' false
-        echo "REALSENSE:"$! >> $PID_FILE
+        #rosrun dynamic_reconfigure dynparam set /camera/stereo_module 'emitter_enabled' false
     fi
 fi
 
@@ -197,17 +200,17 @@ if [ $START_SWARM_LOOP -eq 1 ]
 then
     echo "Will start swarm loop"
     taskset -c 1-4 roslaunch swarm_loop loop.launch &> $LOG_PATH/log_swarm_loop.txt &
-    sleep 30
+    /bin/sleep 30
 fi
 
 if [ $START_VO_STUFF -eq 1 ]
 then
-    sleep 10
+    /bin/sleep 10
     echo "Image ready start VO"
     if [ $CAM_TYPE -eq 0 ]
     then
         echo "No ptgrey VINS imple yet"
-        roslaunch vins nodelet_realsense_full.launch &> $LOG_PATH/log_vo.txt &
+        #roslaunch vins nodelet_realsense_full.launch &> $LOG_PATH/log_vo.txt &
     fi
 
     if [ $CAM_TYPE -eq 1 ]
@@ -218,9 +221,8 @@ then
 
     if [ $CAM_TYPE -eq 3 ]
     then
-        #taskset -c 1-4 rosrun vins vins_node /home/dji/SwarmConfig/realsense/realsense_n3_unsync.yaml &> $LOG_PATH/log_vo.txt &
-        #echo "VINS:"$! >> $PID_FILE
         roslaunch vins nodelet_realsense_full.launch &> $LOG_PATH/log_vo.txt &
+        echo "VINS:"$! >> $PID_FILE
     fi
 fi
 
@@ -239,7 +241,7 @@ fi
 if [ $START_UWB_FUSE -eq 1 ]
 then
 
-    #taskset -c 5-6 roslaunch swarm_yolo drone_detector.launch &> $LOG_PATH/log_swarm_detection.txt &
+    taskset -c 1-4 roslaunch swarm_yolo drone_detector.launch &> $LOG_PATH/log_swarm_detection.txt &
     echo "SWARM_DETECT:"$! >> $PID_FILE
     taskset -c 1-4 roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
     echo "SWARM_LOCAL:"$! >> $PID_FILE
