@@ -140,8 +140,9 @@ sudo /home/dji/jetson_clocks.sh
 
 if [ $START_DJISDK -eq 1 ]
 then
-    taskset -c 1-4 roslaunch dji_sdk sdk.launch &> $LOG_PATH/log_sdk.txt &
+    taskset -c 1-3 roslaunch dji_sdk sdk.launch &> $LOG_PATH/log_sdk.txt &
     echo "DJISDK:"$! >> $PID_FILE
+    sleep 10
 fi
 
 
@@ -186,7 +187,7 @@ then
     if [ $CAM_TYPE -eq 3 ]
     then
         echo "Will use realsense Camera"
-        taskset -c 5-6  roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
+        taskset -c 4-6  roslaunch realsense2_camera rs_camera.launch  &> $LOG_PATH/log_camera.txt &
         echo "REALSENSE:"$! >> $PID_FILE
 
         /bin/sleep 10
@@ -199,7 +200,7 @@ fi
 if [ $START_SWARM_LOOP -eq 1 ]
 then
     echo "Will start swarm loop"
-    taskset -c 1-4 roslaunch swarm_loop loop.launch &> $LOG_PATH/log_swarm_loop.txt &
+    taskset -c 1-3 roslaunch swarm_loop loop.launch &> $LOG_PATH/log_swarm_loop.txt &
     /bin/sleep 30
 fi
 
@@ -221,8 +222,9 @@ then
 
     if [ $CAM_TYPE -eq 3 ]
     then
-        roslaunch vins nodelet_realsense_full.launch &> $LOG_PATH/log_vo.txt &
+        taskset -c 4-6 roslaunch vins nodelet_realsense_full.launch config_file:=/home/dji/SwarmConfig/realsense/realsense_n3_unsync.yaml &> $LOG_PATH/log_vo.txt &
         echo "VINS:"$! >> $PID_FILE
+        sleep 5
     fi
 fi
 
@@ -234,17 +236,18 @@ fi
 
 if [ $START_UWB_COMM -eq 1 ]
 then
-    taskset -c 1-4 roslaunch localization_proxy uwb_comm.launch &> $LOG_PATH/log_comm.txt &
+    taskset -c 1-3 roslaunch localization_proxy uwb_comm.launch &> $LOG_PATH/log_comm.txt &
     echo "SWARM_UWB_COMM:"$! >> $PID_FILE
 fi
 
 if [ $START_UWB_FUSE -eq 1 ]
 then
 
-    taskset -c 1-4 roslaunch swarm_yolo drone_detector.launch &> $LOG_PATH/log_swarm_detection.txt &
+    taskset -c 1-3 roslaunch swarm_yolo drone_detector.launch &> $LOG_PATH/log_swarm_detection.txt &
     echo "SWARM_DETECT:"$! >> $PID_FILE
-    taskset -c 1-4 roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
+    taskset -c 1-3 roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
     echo "SWARM_LOCAL:"$! >> $PID_FILE
+    sleep 1
 fi
 
 if [ $START_CONTROL -eq 1 ]
@@ -252,18 +255,18 @@ then
     if [ $USE_VICON_CTRL -eq 1 ]
     then
         echo "Start drone_commander with VICON"
-        taskset -c 1-4 roslaunch drone_commander commander.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_commander.txt &
+        taskset -c 1-3 roslaunch drone_commander commander.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_commander.txt &
         echo "drone_commander:"$! >> $PID_FILE
         echo "Start position ctrl with VICON"
-        taskset -c 1-4 roslaunch drone_position_control pos_control_vicon.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_position_ctrl.txt &
+        taskset -c 1-3 roslaunch drone_position_control pos_control_vicon.launch vo_topic:=/uwb_vicon_odom &> $LOG_PATH/log_drone_position_ctrl.txt &
         echo "drone_pos_ctrl:"$! >> $PID_FILE
 
     else
         echo "Start drone_commander"
-        taskset -c 1-4 roslaunch drone_commander commander.launch &> $LOG_PATH/log_drone_commander.txt &
+        taskset -c 1-3 roslaunch drone_commander commander.launch &> $LOG_PATH/log_drone_commander.txt &
         echo "drone_commander:"$! >> $PID_FILE
         echo "Start position ctrl"
-        taskset -c 1-4 roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
+        taskset -c 1-3 roslaunch drone_position_control pos_control.launch &> $LOG_PATH/log_drone_position_ctrl.txt &
         echo "drone_pos_ctrl:"$! >> $PID_FILE
         rosrun traj_generator traj_test &> $LOG_PATH/log_traj.txt &
         echo "traj":$! >> $PID_FILE
@@ -297,5 +300,11 @@ fi
 if [ $RECORD_BAG -eq 3 ]
 then
     rosbag record -o /ssd/bags/swarm_vicon_bags/swarm_loop_log.bag /dji_sdk_1/dji_sdk/imu /camera/infra1/image_rect_raw /camera/infra2/image_rect_raw &
+    echo "rosbag:"$! >> $PID_FILE
+fi
+
+if [ $RECORD_BAG -eq 4 ]
+then
+    rosbag record -o /ssd/bags/swarm_loop /swarm_drones/swarm_frame /swarm_drones/swarm_frame_predict /swarm_loop/loop_connection
     echo "rosbag:"$! >> $PID_FILE
 fi
