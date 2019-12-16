@@ -146,6 +146,12 @@ then
 fi
 
 
+if [ $START_SWARM_LOOP -eq 1 ]
+then
+    echo "Will start swarm loop"
+    taskset -c 1-3 roslaunch swarm_loop loop-server.launch &> $LOG_PATH/log_swarm_loop.txt &
+    /bin/sleep 30
+fi
 
 if [ $START_CAMERA -eq 1 ]
 then
@@ -197,12 +203,6 @@ then
     fi
 fi
 
-if [ $START_SWARM_LOOP -eq 1 ]
-then
-    echo "Will start swarm loop"
-    taskset -c 1-3 roslaunch swarm_loop loop.launch &> $LOG_PATH/log_swarm_loop.txt &
-    /bin/sleep 30
-fi
 
 if [ $START_VO_STUFF -eq 1 ]
 then
@@ -246,9 +246,22 @@ then
 
     taskset -c 1-3 roslaunch swarm_yolo drone_detector.launch &> $LOG_PATH/log_swarm_detection.txt &
     echo "SWARM_DETECT:"$! >> $PID_FILE
-    taskset -c 1-3 roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
+
+    if [ $START_SWARM_LOOP -eq 1 ]
+    then
+        taskset -c 1-3 roslaunch swarm_localization loop-5-drone.launch &> $LOG_PATH/log_swarm.txt &
+    else
+        taskset -c 1-3 roslaunch swarm_localization local-5-drone.launch &> $LOG_PATH/log_swarm.txt &
+    fi
     echo "SWARM_LOCAL:"$! >> $PID_FILE
     sleep 1
+fi
+
+if [ $START_SWARM_LOOP -eq 1 ]
+then
+    echo "Will start swarm loop"
+    /bin/sleep 15
+    taskset -c 1-3 roslaunch swarm_loop loop-only.launch &> $LOG_PATH/log_swarm_loop.txt &
 fi
 
 if [ $START_CONTROL -eq 1 ]
