@@ -32,7 +32,7 @@ then
     roscore &> $LOG_PATH/log_roscore.txt &
     echo "roscore:"$! >> $PID_FILE
     #/bin/sleep 5 wait for core
-    /bin/sleep 15
+    /bin/sleep 5
 
     echo "Will start camera"
     export START_CAMERA=1
@@ -127,7 +127,7 @@ if [ $CONFIG_NETWORK -eq 1 ]
 then
     /home/dji/SwarmAutoInstall/setup_adhoc.sh $NODE_ID &> $LOG_PATH/log_network.txt &
     echo "Wait 10 for network setup"
-    /bin/sleep 10
+    /bin/sleep 1
 fi
 
 # if [ $START_CAMERA -eq 1 ] || [ $START_UWB_FUSE -eq 1]
@@ -142,15 +142,15 @@ if [ $START_DJISDK -eq 1 ]
 then
     taskset -c 1-3 roslaunch dji_sdk sdk.launch &> $LOG_PATH/log_sdk.txt &
     echo "DJISDK:"$! >> $PID_FILE
-    sleep 10
+    sleep 5
 fi
 
 
 if [ $START_SWARM_LOOP -eq 1 ]
 then
     echo "Will start swarm loop"
-    taskset -c 1-3 roslaunch swarm_loop loop-server.launch &> $LOG_PATH/log_swarm_loop.txt &
-    /bin/sleep 30
+    taskset -c 1-3 roslaunch swarm_loop loop-server.launch &> $LOG_PATH/log_swarm_loop_server.txt &
+    #/bin/sleep 30
 fi
 
 if [ $START_CAMERA -eq 1 ]
@@ -257,13 +257,6 @@ then
     sleep 1
 fi
 
-if [ $START_SWARM_LOOP -eq 1 ]
-then
-    echo "Will start swarm loop"
-    /bin/sleep 15
-    taskset -c 1-3 roslaunch swarm_loop loop-only.launch &> $LOG_PATH/log_swarm_loop.txt &
-fi
-
 if [ $START_CONTROL -eq 1 ]
 then
     if [ $USE_VICON_CTRL -eq 1 ]
@@ -290,6 +283,12 @@ then
     rosrun swarm_pilot swarm_pilot_node &> $LOG_PATH/log_swarm_pilot.txt &
     echo "swarm_pilot:"$! >> $PID_FILE
 
+fi
+
+if [ $START_SWARM_LOOP -eq 1 ]
+then
+    echo "Will start swarm loop"
+    taskset -c 1-3 roslaunch swarm_loop loop-only.launch &> $LOG_PATH/log_swarm_loop.txt &
 fi
 
 if [ $RECORD_BAG -eq 1 ]
@@ -321,4 +320,6 @@ if [ $RECORD_BAG -eq 4 ]
 then
     rosbag record -o /ssd/bags/swarm_loop /swarm_drones/swarm_frame /swarm_drones/swarm_frame_predict /swarm_loop/loop_connection
     echo "rosbag:"$! >> $PID_FILE
+fi
+> $PID_FILE
 fi
