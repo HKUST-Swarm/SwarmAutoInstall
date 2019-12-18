@@ -150,6 +150,8 @@ if [ $START_SWARM_LOOP -eq 1 ]
 then
     echo "Will start swarm loop"
     taskset -c 1-3 roslaunch swarm_loop loop-server.launch &> $LOG_PATH/log_swarm_loop_server.txt &
+    echo "LOOPSERVER:"$! >> $PID_FILE
+    sleep 5
     #/bin/sleep 30
 fi
 
@@ -289,6 +291,7 @@ if [ $START_SWARM_LOOP -eq 1 ]
 then
     echo "Will start swarm loop"
     taskset -c 1-3 roslaunch swarm_loop loop-only.launch &> $LOG_PATH/log_swarm_loop.txt &
+    echo "swarm_loop:"$! >> $PID_FILE
 fi
 
 if [ $RECORD_BAG -eq 1 ]
@@ -320,6 +323,4 @@ if [ $RECORD_BAG -eq 4 ]
 then
     rosbag record -o /ssd/bags/swarm_loop /swarm_drones/swarm_frame /swarm_drones/swarm_frame_predict /swarm_loop/loop_connection
     echo "rosbag:"$! >> $PID_FILE
-fi
-> $PID_FILE
 fi
