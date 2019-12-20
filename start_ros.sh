@@ -315,9 +315,10 @@ fi
 
 if [ $RECORD_BAG -eq 3 ]
 then
-    rosbag record -o /ssd/bags/swarm_vicon_bags/swarm_loop_log.bag /dji_sdk_1/dji_sdk/imu /camera/infra1/image_rect_raw /camera/infra2/image_rect_raw &
+    rosbag record -o /ssd/bags/swarm_loop.bag /dji_sdk_1/dji_sdk/imu /camera/infra1/image_rect_raw /camera/infra2/image_rect_raw /camera/depth/image_rect_raw /swarm_loop/remote_image_desc /uwb_node/time_ref /uwb_node/remote_nodes  /uwb_node/incoming_broadcast_data &
     echo "rosbag:"$! >> $PID_FILE
 fi
+
 
 if [ $RECORD_BAG -eq 4 ]
 then
